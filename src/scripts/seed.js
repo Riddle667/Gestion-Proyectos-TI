@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const sqlite3 = require('sqlite3').verbose()
 
-const dbPath = path.resolve(__dirname, '../db/users.db')
+const dbPath = path.resolve(__dirname, '../main/database/local.db')
 
 // Crear carpeta db si no existe
 const dir = path.dirname(dbPath)
@@ -16,7 +16,7 @@ const db = new sqlite3.Database(dbPath)
 db.serialize(() => {
   // Crear tabla de usuarios
   db.run(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS User (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
@@ -25,10 +25,10 @@ db.serialize(() => {
   `)
 
   // Limpiar registros anteriores (opcional)
-  db.run(`DELETE FROM users`)
+  db.run(`DELETE FROM User`)
 
   // Insertar usuarios de prueba
-  const stmt = db.prepare(`INSERT INTO users (email, password, role) VALUES (?, ?, ?)`)
+  const stmt = db.prepare(`INSERT INTO User (email, password, role) VALUES (?, ?, ?)`)
   const users = [
     ['admin@montecristo.cl', 'admin123', 'admin'],
     ['user1@montecristo.cl', 'user123', 'viewer'],
@@ -47,5 +47,5 @@ db.serialize(() => {
 })
 
 db.close(() => {
-  console.log('✅ Base de datos creada y poblada en ./db/users.db')
+  console.log('✅ Base de datos creada y poblada en ./main/database/local.db')
 })

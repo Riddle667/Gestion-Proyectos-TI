@@ -1,13 +1,11 @@
-import { getDatabase } from '../../../db/db.js'
-const db = getDatabase()
-
+import { getDatabase } from '../../database/localDb.js'
 
 export async function authenticateUser(email, password) {
   const db = getDatabase()
 
   return new Promise((resolve, reject) => {
     db.get(
-      'SELECT * FROM users WHERE email = ? AND password = ?',
+      'SELECT * FROM User WHERE email = ? AND password = ?',
       [email, password],
       (err, row) => {
         if (err) {

@@ -1,9 +1,9 @@
-import { ipcMain, app, BrowserWindow, shell } from 'electron'
+import {  app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { is, electronApp, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import './modules/auth/authController.js' // Importa las rutas del login
-import db from '../db/db.js' // Conexión centralizada
+import db from './database/localDb.js' // Conexión centralizada
 import { registerAuthHandlers } from './modules/auth/authController.js'
 
 registerAuthHandlers()
