@@ -23,6 +23,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@tailwindcss/vite": "^4.1.10",
     "electron-updater": "^6.3.9",
+    "mysql2": "^3.14.1",
     "react-router-dom": "^7.6.2",
     "sqlite3": "^5.1.7",
     "tailwindcss": "^4.1.10"

@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import sqlite3 from 'sqlite3'
+import './cloudDb'
+
 
 // Ruta fija al archivo en src/main/database/local.db
 const dbDir = path.join(process.cwd(), 'src', 'main', 'database')

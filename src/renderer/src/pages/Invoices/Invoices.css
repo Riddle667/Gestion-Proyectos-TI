@@ -1,0 +1,134 @@
+/* Estilos generales */
+.invoice-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.invoice-wrapper {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+/* Encabezado */
+.invoice-header {
+  margin-bottom: 2rem;
+}
+
+.invoice-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 1rem;
+}
+
+.invoice-back-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.invoice-back-button:hover {
+  background-color: #f3f4f6;
+  color: #000;
+}
+
+/* Tarjeta del formulario */
+.invoice-card {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.invoice-card-header {
+  padding: 1.5rem 2rem;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.invoice-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+}
+
+/* Formulario */
+.invoice-form {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Grillas */
+.invoice-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .invoice-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Inputs y etiquetas */
+.invoice-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.invoice-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #000;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.invoice-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.invoice-note {
+  font-size: 0.75rem;
+  color: #111;
+  margin-top: 0.25rem;
+}
+
+/* Botón enviar */
+.invoice-submit {
+  padding: 0.75rem 2rem;
+  background-color: #16a34a;
+  color: #fff;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: fit-content;
+}
+
+.invoice-submit:hover {
+  background-color: #15803d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
