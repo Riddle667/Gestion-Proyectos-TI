@@ -16,7 +16,7 @@ export default function Layout() {
         <div className="line"></div>
         <h3>Panel Principal</h3>
         <ul>
-          <li onClick={() => handleRedirect('/facturas')}>Facturas</li>
+          <li onClick={() => handleRedirect('/invoices')}>Facturas</li>
           <li onClick={() => handleRedirect('/ordenes')}>Ordenes de Compra</li>
           <li onClick={() => handleRedirect('/guias')}>Guías de Despacho</li>
         </ul>
