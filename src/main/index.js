@@ -1,4 +1,4 @@
-import {  app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { is, electronApp, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -7,9 +7,7 @@ import db from './database/localDb.js' // Conexión centralizada
 import { registerAuthHandlers } from './modules/auth/authController.js'
 import './ipc/purchaseOrderHandler.js'
 
-
 registerAuthHandlers()
-
 
 function createWindow() {
   const mainWindow = new BrowserWindow({

@@ -28,9 +28,9 @@ export default function Layout() {
         <div className="sidebar-title">Menú Principal</div>
 
         <ul>
-          <li onClick={() => handleRedirect('/invoices')}>Facturas</li>
-          <li onClick={() => handleRedirect('/PurchaseOrder')}>Ordenes de Compra</li>
-          <li onClick={() => handleRedirect('/guias')}>Guías de Despacho</li>
+          <li onClick={() => handleRedirect('/home/invoices')}>Facturas</li>
+          <li onClick={() => handleRedirect('/home/PurchaseOrder')}>Ordenes de Compra</li>
+          <li onClick={() => handleRedirect('/home/guias')}>Guías de Despacho</li>
         </ul>
 
         <button className="logout-button" onClick={handleLogout}>
