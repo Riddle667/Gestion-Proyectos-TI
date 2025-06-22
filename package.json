@@ -30,7 +30,9 @@
   "extraResources": {
     "from": "db/",
     "to": "db",
-    "filter": ["**/*"]
+    "filter": [
+      "**/*"
+    ]
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^2.0.0",

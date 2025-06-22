@@ -28,7 +28,7 @@ export default function Layout() {
         <div className="sidebar-title">Menú Principal</div>
 
         <ul>
-          <li onClick={() => handleRedirect('/facturas')}>Facturas</li>
+          <li onClick={() => handleRedirect('/invoices')}>Facturas</li>
           <li onClick={() => handleRedirect('/ordenes')}>Ordenes de Compra</li>
           <li onClick={() => handleRedirect('/guias')}>Guías de Despacho</li>
         </ul>
