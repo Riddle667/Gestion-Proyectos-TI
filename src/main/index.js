@@ -5,6 +5,8 @@ import icon from '../../resources/icon.png?asset'
 import './modules/auth/authController.js' // Importa las rutas del login
 import db from './database/localDb.js' // Conexión centralizada
 import { registerAuthHandlers } from './modules/auth/authController.js'
+import './ipc/purchaseOrderHandler.js'
+
 
 registerAuthHandlers()
 

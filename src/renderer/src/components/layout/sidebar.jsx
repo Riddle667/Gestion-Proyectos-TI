@@ -29,7 +29,7 @@ export default function Layout() {
 
         <ul>
           <li onClick={() => handleRedirect('/invoices')}>Facturas</li>
-          <li onClick={() => handleRedirect('/ordenes')}>Ordenes de Compra</li>
+          <li onClick={() => handleRedirect('/PurchaseOrder')}>Ordenes de Compra</li>
           <li onClick={() => handleRedirect('/guias')}>Guías de Despacho</li>
         </ul>
 
