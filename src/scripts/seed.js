@@ -40,7 +40,7 @@ db.serialize(() => {
     ['carlos@montecristo.cl', 'carlos123', 'admin'],
     ['ana@montecristo.cl', 'ana123', 'viewer'],
     ['pepe@montecristo.cl', 'pepe123', 'viewer'],
-    ['aaa@gmail', '123', 'admin']
+    ['a@a', '12345678', 'admin']
   ]
   users.forEach((user) => stmt.run(...user))
   stmt.finalize()

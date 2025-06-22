@@ -60,7 +60,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
       db.run(`
         CREATE TABLE IF NOT EXISTS PurchaseOrder (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          purchase_order_number TEXT NOT NULL UNIQUE
+          purchase_order_number TEXT NOT NULL UNIQUE,
+          company_name TEXT,
+          company_representative,
+          date TEXT,
+          order_amount TEXT
         )
       `)
 

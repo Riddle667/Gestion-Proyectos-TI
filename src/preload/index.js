@@ -8,6 +8,11 @@ const api = {
   restore: () => ipcRenderer.invoke('sync:restore')
 }
 
+contextBridge.exposeInMainWorld('electronAPI', {
+  getPurchaseOrders: () => ipcRenderer.invoke('get-purchase-orders'),
+  addPurchaseOrder: (orderNumber) => ipcRenderer.invoke('add-purchase-order', orderNumber)
+})
+
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
