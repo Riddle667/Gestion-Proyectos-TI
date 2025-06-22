@@ -9,6 +9,8 @@ const api = {
 }
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  getInvoices: () => ipcRenderer.invoke('get-invoices'),
+  addInvoice: (invoiceData) => ipcRenderer.invoke('add-invoice', invoiceData),
   getPurchaseOrders: () => ipcRenderer.invoke('get-purchase-orders'),
   addPurchaseOrder: (orderNumber) => ipcRenderer.invoke('add-purchase-order', orderNumber)
 })

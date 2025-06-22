@@ -6,6 +6,7 @@ import './modules/auth/authController.js' // Importa las rutas del login
 import db from './database/localDb.js' // Conexión centralizada
 import { registerAuthHandlers } from './modules/auth/authController.js'
 import './ipc/purchaseOrderHandler.js'
+import './ipc/invoicesHandler.js'
 
 registerAuthHandlers()
 

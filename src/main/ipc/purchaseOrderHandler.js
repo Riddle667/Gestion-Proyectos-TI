@@ -22,7 +22,7 @@ ipcMain.handle('get-purchase-orders', async () => {
 ipcMain.handle('add-purchase-order', async (event, orderData) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase()
-    
+
     // Extraer los datos del objeto
     const {
       purchase_order_number,
@@ -31,16 +31,16 @@ ipcMain.handle('add-purchase-order', async (event, orderData) => {
       date = null,
       order_amount = null
     } = orderData
-    
+
     // Validar campo requerido
     if (!purchase_order_number || !purchase_order_number.trim()) {
       reject('El número de orden es requerido')
       return
     }
-    
+
     db.run(
-      `INSERT INTO PurchaseOrder 
-       (purchase_order_number, company_name, company_representative, date, order_amount) 
+      `INSERT INTO PurchaseOrder
+       (purchase_order_number, company_name, company_representative, date, order_amount)
        VALUES (?, ?, ?, ?, ?)`,
       [
         purchase_order_number.trim(),
@@ -66,7 +66,7 @@ ipcMain.handle('add-purchase-order', async (event, orderData) => {
             date,
             order_amount
           })
-          resolve({ 
+          resolve({
             id: this.lastID,
             purchase_order_number,
             company_name,
@@ -84,7 +84,7 @@ ipcMain.handle('add-purchase-order', async (event, orderData) => {
 ipcMain.handle('update-purchase-order', async (event, id, orderData) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase()
-    
+
     const {
       purchase_order_number,
       company_name = null,
@@ -92,18 +92,18 @@ ipcMain.handle('update-purchase-order', async (event, id, orderData) => {
       date = null,
       order_amount = null
     } = orderData
-    
+
     if (!purchase_order_number || !purchase_order_number.trim()) {
       reject('El número de orden es requerido')
       return
     }
-    
+
     db.run(
-      `UPDATE PurchaseOrder 
-       SET purchase_order_number = ?, 
-           company_name = ?, 
-           company_representative = ?, 
-           date = ?, 
+      `UPDATE PurchaseOrder
+       SET purchase_order_number = ?,
+           company_name = ?,
+           company_representative = ?,
+           date = ?,
            order_amount = ?
        WHERE id = ?`,
       [
@@ -137,22 +137,18 @@ ipcMain.handle('update-purchase-order', async (event, id, orderData) => {
 ipcMain.handle('delete-purchase-order', async (event, id) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase()
-    
-    db.run(
-      'DELETE FROM PurchaseOrder WHERE id = ?',
-      [id],
-      function (err) {
-        if (err) {
-          console.error('❌ Error al eliminar orden:', err)
-          reject(err.message)
-        } else if (this.changes === 0) {
-          reject('No se encontró la orden a eliminar')
-        } else {
-          console.log('✅ Orden eliminada:', id)
-          resolve({ id, deleted: true })
-        }
+
+    db.run('DELETE FROM PurchaseOrder WHERE id = ?', [id], function (err) {
+      if (err) {
+        console.error('❌ Error al eliminar orden:', err)
+        reject(err.message)
+      } else if (this.changes === 0) {
+        reject('No se encontró la orden a eliminar')
+      } else {
+        console.log('✅ Orden eliminada:', id)
+        resolve({ id, deleted: true })
       }
-    )
+    })
   })
 })
 
@@ -177,11 +173,11 @@ ipcMain.handle('get-purchase-order-by-id', async (event, id) => {
 ipcMain.handle('search-purchase-orders', async (event, searchTerm) => {
   return new Promise((resolve, reject) => {
     const searchPattern = `%${searchTerm}%`
-    
+
     db.all(
-      `SELECT * FROM PurchaseOrder 
-       WHERE purchase_order_number LIKE ? 
-          OR company_name LIKE ? 
+      `SELECT * FROM PurchaseOrder
+       WHERE purchase_order_number LIKE ?
+          OR company_name LIKE ?
           OR company_representative LIKE ?
        ORDER BY id DESC`,
       [searchPattern, searchPattern, searchPattern],

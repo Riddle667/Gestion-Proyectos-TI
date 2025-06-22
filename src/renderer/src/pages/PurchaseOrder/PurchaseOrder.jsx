@@ -36,7 +36,7 @@ const PurchaseOrder = () => {
         date: formData.date,
         order_amount: formData.orderAmount
       })
-      
+
       // Resetear formulario
       setFormData({
         purchaseOrderNumber: '',
@@ -45,7 +45,7 @@ const PurchaseOrder = () => {
         date: '',
         orderAmount: ''
       })
-      
+
       setIsModalOpen(false)
       fetchOrders()
     } catch (error) {
@@ -54,7 +54,7 @@ const PurchaseOrder = () => {
   }
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value
     }))
@@ -100,10 +100,7 @@ const PurchaseOrder = () => {
       <div className="card">
         <div className="header-section">
           <h2>Órdenes de Compra</h2>
-          <button 
-            className="btn-primary"
-            onClick={() => setIsModalOpen(true)}
-          >
+          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
             + Nueva Orden
           </button>
         </div>
@@ -146,14 +143,11 @@ const PurchaseOrder = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h3>Nueva Orden de Compra</h3>
-              <button 
-                className="btn-close"
-                onClick={handleCancelModal}
-              >
+              <button className="btn-close" onClick={handleCancelModal}>
                 ×
               </button>
             </div>
-            
+
             <div className="modal-body">
               <div className="form-grid">
                 <div className="form-group">
@@ -214,15 +208,12 @@ const PurchaseOrder = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="modal-footer">
-              <button 
-                className="btn-secondary"
-                onClick={handleCancelModal}
-              >
+              <button className="btn-secondary" onClick={handleCancelModal}>
                 Cancelar
               </button>
-              <button 
+              <button
                 className="btn-primary"
                 onClick={handleAddOrder}
                 disabled={!formData.purchaseOrderNumber.trim()}
