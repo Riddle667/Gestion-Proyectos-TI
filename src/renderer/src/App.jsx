@@ -2,6 +2,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login/Login'
 import Home from './pages/home/Home'
 import Layout from './components/layout/sidebar'
+import PurchaseOrder from './pages/PurchaseOrder/PurchaseOrder'
 import Invoices from './pages/Invoices/Invoices'
 import CreateInvoice from './pages/Invoices/CreateInvoice'
 
@@ -12,9 +13,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path='/home' element={<Layout />}>
           <Route index element={<Home />} />
-        </Route>
-        <Route path='/Invoices' element={<Layout />}>
-          <Route index element={<Invoices />} />
+          <Route path="/home/PurchaseOrder" element={<PurchaseOrder />} />
+          <Route path='/home/Invoices' element={<Invoices />} />
           <Route path="create" element={<CreateInvoice />} />
         </Route>
       </Routes>
