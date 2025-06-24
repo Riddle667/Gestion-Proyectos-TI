@@ -1,33 +1,22 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import Login from './pages/Login/Login'
+import Home from './pages/home/Home'
+import Layout from './components/layout/sidebar'
+import PurchaseOrder from './pages/PurchaseOrder/PurchaseOrder'
+import Invoices from './pages/Invoices/Invoices'
 
 function App() {
-  const ipcHandle = () => window.electron.ipcRenderer.send('ping')
-
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="/home/purchaseOrder" element={<PurchaseOrder />} />
+          <Route path="/home/invoices" element={<Invoices />} />
+        </Route>
+      </Routes>
+    </Router>
   )
 }
 
