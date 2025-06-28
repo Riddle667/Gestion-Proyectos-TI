@@ -1,18 +1,24 @@
 import { getDatabase } from '../../database/localDb.js'
+import bcrypt from 'bcryptjs'
 
 export async function authenticateUser(email, password) {
   const db = getDatabase()
 
   return new Promise((resolve, reject) => {
     try {
-      const row = db
-        .prepare('SELECT * FROM User WHERE email = ? AND password = ?')
-        .get(email, password)
+      const user = db.prepare('SELECT * FROM User WHERE email = ?').get(email)
 
-      if (row) resolve(row)
-      else reject(new Error('Credenciales inválidas'))
+      if (!user) return reject(new Error('Correo no registrado'))
+
+      const validPassword = bcrypt.compareSync(password, user.password)
+
+      if (!validPassword) return reject(new Error('Contraseña incorrecta'))
+
+      // Retorna el usuario sin la contraseña
+      const { password: _, ...userWithoutPassword } = user
+      resolve(userWithoutPassword)
     } catch (err) {
-      console.error('Error en la consulta:', err)
+      console.error('Error en la autenticación:', err)
       reject(new Error('Error interno'))
     }
   })

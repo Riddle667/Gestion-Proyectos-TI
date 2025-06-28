@@ -13,6 +13,14 @@ const Invoices = () => {
     purchaseOrder: '',
     dispatchGuide: ''
   })
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    fetchInvoices()
+    window.api.getCurrentUser().then((u) => {
+      setUser(u)
+    })
+  }, [])
 
   const fetchInvoices = async () => {
     try {
@@ -91,18 +99,16 @@ const Invoices = () => {
     }).format(parseFloat(value))
   }
 
-  useEffect(() => {
-    fetchInvoices()
-  }, [])
-
   return (
     <div className="invoice-container">
       <div className="card">
         <div className="header-section">
           <h2>Facturas</h2>
-          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-            + Nueva Factura
-          </button>
+          {user && user.role === 'admin' && (
+            <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+              + Nueva Factura
+            </button>
+          )}
         </div>
 
         {invoices.length === 0 ? (
@@ -147,7 +153,9 @@ const Invoices = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h3>Nueva Factura</h3>
-              <button className="btn-close" onClick={handleCancelModal}>×</button>
+              <button className="btn-close" onClick={handleCancelModal}>
+                ×
+              </button>
             </div>
 
             <div className="modal-body">

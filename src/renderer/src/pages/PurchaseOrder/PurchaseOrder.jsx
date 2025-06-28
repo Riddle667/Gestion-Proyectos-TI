@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './PurchaseOrder.css'
 
 const PurchaseOrder = () => {
@@ -11,6 +11,14 @@ const PurchaseOrder = () => {
     date: '',
     orderAmount: ''
   })
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    fetchOrders()
+    window.api.getCurrentUser().then((u) => {
+      setUser(u)
+    })
+  }, [])
 
   const fetchOrders = async () => {
     try {
@@ -91,18 +99,17 @@ const PurchaseOrder = () => {
     }).format(parseFloat(amount))
   }
 
-  useEffect(() => {
-    fetchOrders()
-  }, [])
-
   return (
     <div className="purchase-order-container">
       <div className="card">
         <div className="header-section">
           <h2>Órdenes de Compra</h2>
-          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-            + Nueva Orden
-          </button>
+
+          {user && user.role === 'admin' && (
+            <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+              + Nueva Orden
+            </button>
+          )}
         </div>
 
         {orders.length === 0 ? (
