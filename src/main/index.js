@@ -7,7 +7,7 @@ import db from './database/localDb.js' // Conexión centralizada
 import { registerAuthHandlers } from './modules/auth/authController.js'
 import './ipc/purchaseOrderHandler.js'
 import './ipc/invoicesHandler.js'
-
+import { setupSyncHandlers } from './ipc/index.js'
 registerAuthHandlers()
 
 function createWindow() {

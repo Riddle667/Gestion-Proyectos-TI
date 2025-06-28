@@ -162,23 +162,182 @@
   transform: scale(1.02);
 }
 
-.logout-button {
-  margin-top: auto;
-  background-color: #d9534f;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+/* Contenedor para los botones de backup y restore */
+.sidebar-actions {
   width: 100%;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  z-index: 1;
-  position: relative;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+/* Estilo común para backup y restore */
+.sidebar-actions button {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+/* Backup: color primario */
+.backup-button {
+  background-color: #28a745; /* verde */
+}
+
+.backup-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+/* Restore: color secundario */
+.restore-button {
+  background-color: #17a2b8; /* azul */
+}
+
+.restore-button:hover {
+  background-color: #117a8b;
+  transform: scale(1.05);
+}
+
+/* Logout fijo abajo */
+.logout-button {
+  background-color: #dc3545; /* rojo */
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  width: calc(100% - 3rem); /* un poco menos que el ancho del sidebar */
+  margin: 0 auto 1rem auto;
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+  text-align: center;
 }
 
 .logout-button:hover {
-  background-color: #c9302c;
-  transform: scale(1.03);
+  background-color: #bd2130;
+  transform: scale(1.05);
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.modal p {
+  color: #555;
+  margin: 1rem 0;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-buttons button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-buttons button:first-child:hover {
+  background-color: #218838;
+}
+
+.modal-buttons button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: #c82333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: slideUpFade 0.5s ease-out;
+}
+
+.feedback-toast.success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.feedback-toast.error {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
