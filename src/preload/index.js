@@ -4,6 +4,7 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   login: (credentials) => ipcRenderer.invoke('auth:login', credentials),
+  getCurrentUser: () => ipcRenderer.invoke('auth:getCurrentUser'),
   backup: () => ipcRenderer.invoke('sync:backup'),
   restore: () => ipcRenderer.invoke('sync:restore')
 }

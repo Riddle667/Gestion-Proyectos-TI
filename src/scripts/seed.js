@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const sqlite3 = require('sqlite3').verbose()
+const bcrypt = require('bcryptjs')
 
 const dbPath = path.resolve(__dirname, '../main/database/local.db')
 
@@ -13,7 +14,7 @@ if (!fs.existsSync(dir)) {
 // Crear conexión
 const db = new sqlite3.Database(dbPath)
 
-db.serialize(() => {
+db.serialize(async () => {
   // Crear tabla de usuarios
   db.run(`
     CREATE TABLE IF NOT EXISTS User (
@@ -29,6 +30,7 @@ db.serialize(() => {
 
   // Insertar usuarios de prueba
   const stmt = db.prepare(`INSERT INTO User (email, password, role) VALUES (?, ?, ?)`)
+
   const users = [
     ['admin@montecristo.cl', 'admin123', 'admin'],
     ['user1@montecristo.cl', 'user123', 'viewer'],
@@ -42,10 +44,18 @@ db.serialize(() => {
     ['pepe@montecristo.cl', 'pepe123', 'viewer'],
     ['a@a', '12345678', 'admin']
   ]
-  users.forEach((user) => stmt.run(...user))
+
+  // Hashear contraseñas
+  for (const [email, plainPassword, role] of users) {
+    const hashedPassword = bcrypt.hashSync(plainPassword, 10)
+    stmt.run(email, hashedPassword, role)
+  }
+
   stmt.finalize()
 })
 
 db.close(() => {
-  console.log('✅ Base de datos creada y poblada en ./main/database/local.db')
+  console.log(
+    '✅ Base de datos creada y poblada con contraseñas hasheadas en ./main/database/local.db'
+  )
 })

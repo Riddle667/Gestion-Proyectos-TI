@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import './SideBar.css'
 import logo from '../../assets/LOGO3.png'
@@ -10,6 +10,13 @@ export default function Layout() {
   const [modalAction, setModalAction] = useState(null)
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackType, setFeedbackType] = useState('') // 'success' | 'error'
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    window.api.getCurrentUser().then((u) => {
+      setUser(u)
+    })
+  }, [])
 
   const handleRedirect = (route) => {
     navigate(route)
@@ -81,14 +88,16 @@ export default function Layout() {
           <li onClick={() => handleRedirect('/home/guias')}>Guías de Despacho</li>
         </ul>
 
-        <div className="sidebar-actions">
-          <button className="backup-button" onClick={() => openModal('backup')}>
-            Respaldar
-          </button>
-          <button className="restore-button" onClick={() => openModal('restore')}>
-            Restaurar
-          </button>
-        </div>
+        {user && user.role === 'admin' && (
+          <div className="sidebar-actions">
+            <button className="backup-button" onClick={() => openModal('backup')}>
+              Respaldar
+            </button>
+            <button className="restore-button" onClick={() => openModal('restore')}>
+              Restaurar
+            </button>
+          </div>
+        )}
 
         <button className="logout-button" onClick={() => openModal('logout')}>
           Cerrar Sesión
