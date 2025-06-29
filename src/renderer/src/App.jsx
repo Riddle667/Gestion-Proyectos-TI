@@ -4,6 +4,7 @@ import Home from './pages/home/Home'
 import Layout from './components/layout/sidebar'
 import PurchaseOrder from './pages/PurchaseOrder/PurchaseOrder'
 import Invoices from './pages/Invoices/Invoices'
+import DispatchGuide from './pages/DispatchGuide/DispatchGuide'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/home/purchaseOrder" element={<PurchaseOrder />} />
           <Route path="/home/invoices" element={<Invoices />} />
+          <Route path="/home/dispatchGuide" element={<DispatchGuide />} />
         </Route>
       </Routes>
     </Router>
