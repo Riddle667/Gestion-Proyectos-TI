@@ -85,7 +85,7 @@ export default function Layout() {
         <ul>
           <li onClick={() => handleRedirect('/home/invoices')}>Facturas</li>
           <li onClick={() => handleRedirect('/home/PurchaseOrder')}>Órdenes de Compra</li>
-          <li onClick={() => handleRedirect('/home/guias')}>Guías de Despacho</li>
+          <li onClick={() => handleRedirect('/home/DispatchGuide')}>Guías de Despacho</li>
         </ul>
 
         {user && user.role === 'admin' && (

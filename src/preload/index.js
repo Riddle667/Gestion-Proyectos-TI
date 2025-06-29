@@ -13,7 +13,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getInvoices: () => ipcRenderer.invoke('get-invoices'),
   addInvoice: (invoiceData) => ipcRenderer.invoke('add-invoice', invoiceData),
   getPurchaseOrders: () => ipcRenderer.invoke('get-purchase-orders'),
-  addPurchaseOrder: (orderNumber) => ipcRenderer.invoke('add-purchase-order', orderNumber)
+  addPurchaseOrder: (orderNumber) => ipcRenderer.invoke('add-purchase-order', orderNumber),
+  getDispatchGuides: () => ipcRenderer.invoke('get-dispatch-guides'),
+  addDispatchGuide: (dispatchGuideNumber) => ipcRenderer.invoke('add-dispatch-guide', dispatchGuideNumber)
 })
 
 // Use `contextBridge` APIs to expose Electron APIs to

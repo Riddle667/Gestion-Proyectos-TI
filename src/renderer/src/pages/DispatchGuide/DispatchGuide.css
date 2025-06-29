@@ -1,4 +1,4 @@
-.purchase-order-container {
+.dispatch-guide-container {
   margin-left: 230px; /* deja espacio para el sidebar fijo */
   width: calc(100vw - 230px); /* ✅ ocupa el resto del ancho de la ventana */
   height: 100vh;
