@@ -73,7 +73,7 @@ export default function Layout() {
   return (
     <div className="home-container">
       <div className="sidebar">
-        <div className="logo-container">
+        <div className="logo-container" onClick={() => handleRedirect('/home')}>
           <img src={logo} alt="Logo Montecristo" />
         </div>
 

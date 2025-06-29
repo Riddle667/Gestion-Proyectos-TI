@@ -27,6 +27,7 @@
 /* Logo */
 .logo-container {
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .logo-container img {
