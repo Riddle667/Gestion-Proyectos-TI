@@ -13,6 +13,9 @@ if (!fs.existsSync(dbDir)) {
 const db = new Database(dbPath)
 console.log('✅ Base de datos conectada en:', dbPath)
 
+// Activar soporte para claves foráneas
+db.pragma('foreign_keys = ON')
+
 // Crear tablas (sincronizadamente)
 db.exec(`
   CREATE TABLE IF NOT EXISTS User (
@@ -22,15 +25,13 @@ db.exec(`
     role TEXT NOT NULL DEFAULT 'normal'
   );
 
-  CREATE TABLE IF NOT EXISTS Invoice (
+  CREATE TABLE IF NOT EXISTS PurchaseOrder (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    invoice_number TEXT NOT NULL UNIQUE,
-    date TEXT NOT NULL,
-    company_name TEXT NOT NULL,
-    net_amount REAL NOT NULL,
-    tax_iva REAL NOT NULL,
-    purchase_order TEXT,
-    dispatch_guide TEXT
+    purchase_order_number TEXT NOT NULL UNIQUE,
+    company_name TEXT,
+    company_representative TEXT,
+    date TEXT,
+    order_amount REAL
   );
 
   CREATE TABLE IF NOT EXISTS DispatchGuide (
@@ -44,16 +45,24 @@ db.exec(`
     city TEXT,
     contact TEXT,
     transport_type TEXT,
-    purchase_order TEXT
+    purchase_order_id INTEGER,
+    FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
+      ON DELETE SET NULL ON UPDATE CASCADE
   );
 
-  CREATE TABLE IF NOT EXISTS PurchaseOrder (
+  CREATE TABLE IF NOT EXISTS Invoice (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    purchase_order_number TEXT NOT NULL UNIQUE,
-    company_name TEXT,
-    company_representative TEXT,
-    date TEXT,
-    order_amount TEXT
+    invoice_number TEXT NOT NULL UNIQUE,
+    date TEXT NOT NULL,
+    company_name TEXT NOT NULL,
+    net_amount REAL NOT NULL,
+    tax_iva REAL NOT NULL,
+    purchase_order_id INTEGER,
+    dispatch_guide_id INTEGER,
+    FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
+      ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (dispatch_guide_id) REFERENCES DispatchGuide(id)
+      ON DELETE SET NULL ON UPDATE CASCADE
   );
 `)
 

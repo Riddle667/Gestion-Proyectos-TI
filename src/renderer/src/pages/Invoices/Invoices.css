@@ -257,6 +257,91 @@
   border-radius: 0 0 12px 12px;
 }
 
+/* General para botones de íconos */
+.icon-btn {
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para editar */
+.icon-btn.edit {
+  color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.icon-btn.edit:hover {
+  background-color: rgba(25, 118, 210, 0.2);
+}
+
+/* Estilo para eliminar */
+.icon-btn.delete {
+  color: #d32f2f;
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.icon-btn.delete:hover {
+  background-color: rgba(211, 47, 47, 0.2);
+}
+
+.icon-group {
+  display: flex;
+  gap: 6px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+}
+
+/* Feedback */
+.feedback-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #eee;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+.feedback-toast.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.feedback-toast.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+
 /* Responsive */
 @media (max-width: 600px) {
   .invoice-container {

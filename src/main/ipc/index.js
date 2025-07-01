@@ -6,20 +6,14 @@ const localDb = getDatabase()
 let cloudDb // Será inicializada correctamente más abajo
 
 // Tablas a sincronizar
-const tables = ['User', 'Invoice', 'DispatchGuide', 'PurchaseOrder']
+const tables = ['User', 'PurchaseOrder', 'DispatchGuide', 'Invoice']
 
 // Función para sincronizar desde local hacia nube (SQLite → MySQL)
 async function backupToCloud() {
   try {
     for (const table of tables) {
       const rows = localDb.prepare(`SELECT * FROM ${table}`).all()
-
-      if (!Array.isArray(rows)) {
-        console.error(`❌ Los datos obtenidos de ${table} no son un array`)
-        continue
-      }
-
-      if (rows.length === 0) continue
+      if (!Array.isArray(rows) || rows.length === 0) continue
 
       await cloudDb.execute(`DELETE FROM ${table}`)
 
@@ -27,7 +21,32 @@ async function backupToCloud() {
         const columns = Object.keys(row)
         const placeholders = columns.map(() => '?').join(', ')
         const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`
-        await cloudDb.execute(sql, Object.values(row))
+
+        let values = Object.values(row)
+
+        // Validar claves foráneas solo en la tabla Invoice
+        if (table === 'Invoice') {
+          const purchaseOrderId = row.purchase_order_id
+          const dispatchGuideId = row.dispatch_guide_id
+
+          const [po] = await cloudDb.execute(`SELECT id FROM PurchaseOrder WHERE id = ?`, [
+            purchaseOrderId
+          ])
+          const [dg] = await cloudDb.execute(`SELECT id FROM DispatchGuide WHERE id = ?`, [
+            dispatchGuideId
+          ])
+
+          const validPO = po.length > 0
+          const validDG = dg.length > 0
+
+          const colIndexPO = columns.indexOf('purchase_order_id')
+          const colIndexDG = columns.indexOf('dispatch_guide_id')
+
+          if (colIndexPO !== -1) values[colIndexPO] = validPO ? purchaseOrderId : null
+          if (colIndexDG !== -1) values[colIndexDG] = validDG ? dispatchGuideId : null
+        }
+
+        await cloudDb.execute(sql, values)
       }
     }
 
