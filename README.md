@@ -1,28 +1,42 @@
-# Gestion de proyectos TI - Sistema de Gestión de Pagos
+# 🧾 Sistema de Gestión de Documentos Montecristo
 
-![Electron](https://img.shields.io/badge/Built%20With-Electron-blue.svg)
-![Status](https://img.shields.io/badge/status-en%20desarrollo-yellow)
-![License](https://img.shields.io/badge/license-MIT-green)
+Este proyecto es una aplicación de escritorio construida con **Electron** y **Vite**, diseñada para gestionar documentos administrativos como facturas, órdenes de compra y guías de despacho. La app funciona con una base de datos **local (SQLite)** y puede sincronizar datos hacia y desde una base de datos **remota (MySQL)**.
 
+---
 
-## 🚀 Características principales
+## 🚀 Características
 
-- 💳 Registro y gestión de pagos de clientes y proveedores
-- 🔍 Búsqueda y filtrado de transacciones por fecha, cliente o estado
-- 🔒 Almacenamiento local con respaldo en la nube
+- Gestión de:
+  - Facturas (`Invoice`)
+  - Órdenes de compra (`PurchaseOrder`)
+  - Guías de despacho (`DispatchGuide`)
+  - Usuarios (`User`)
+- Base de datos **local** en SQLite (`better-sqlite3`)
+- Base de datos **en la nube** (MySQL)
+- **Sincronización** de datos en ambas direcciones (local ↔ nube)
+- CRUD completo mediante **IPC**
+- Autenticación de usuarios
+- Empaquetado modular con **Vite**
 
-## 🧰 Tecnologías utilizadas
+---
 
-- [Electron](https://www.electronjs.org/) - Framework para crear apps de escritorio multiplataforma
-- [Node.js](https://nodejs.org/) - Motor de JavaScript para el backend
-- [SQLite](https://www.sqlite.org/) - Base de datos para almacenamiento local y sincronización con nube para respaldo
+## 🛠️ Tecnologías Utilizadas
 
+| Tecnología                | Descripción                                      |
+|---------------------------|--------------------------------------------------|
+| Electron                  | Entorno para construir aplicaciones de escritorio|
+| Vite                      | Empaquetador y entorno de desarrollo             |
+| SQLite (`better-sqlite3`) | Base de datos local ultrarrápida                 |
+| MySQL (`mysql2/promise`)  | Base de datos remota                             |
+| IPC (`ipcMain`)           | Comunicación entre procesos en Electron          |
+| JavaScript (ESM)          | Uso de módulos modernos (`import/export`)        |
+
+---
 
 ## 🔐 Seguridad y privacidad
 
-Este software está diseñado para ejecutarse **de forma local**, con **respaldo automático en la nube**, asegurando la disponibilidad y confidencialidad de los datos financieros de la empresa Monte Cristo.
+Este software está diseñado para ejecutarse **de forma local**, con **respaldo manual en la nube**, asegurando la disponibilidad y confidencialidad de los datos financieros de la empresa Monte Cristo.
 
-## 📈 Próximas funcionalidades
 
 ..
 

@@ -10,12 +10,29 @@ const api = {
 }
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  // ============================
+  // 🧾 Facturas (Invoices)
+  // ============================
   getInvoices: () => ipcRenderer.invoke('get-invoices'),
   addInvoice: (invoiceData) => ipcRenderer.invoke('add-invoice', invoiceData),
+  updateInvoice: (id, invoiceData) => ipcRenderer.invoke('update-invoice', id, invoiceData),
+  deleteInvoice: (id) => ipcRenderer.invoke('delete-invoice', id),
+
+  // ============================
+  // 📦 Órdenes de compra (Purchase Orders)
+  // ============================
   getPurchaseOrders: () => ipcRenderer.invoke('get-purchase-orders'),
-  addPurchaseOrder: (orderNumber) => ipcRenderer.invoke('add-purchase-order', orderNumber),
+  addPurchaseOrder: (orderData) => ipcRenderer.invoke('add-purchase-order', orderData),
+  updatePurchaseOrder: (id, orderData) => ipcRenderer.invoke('update-purchase-order', id, orderData),
+  deletePurchaseOrder: (id) => ipcRenderer.invoke('delete-purchase-order', id),
+
+  // ============================
+  // 🚚 Guías de despacho (Dispatch Guides)
+  // ============================
   getDispatchGuides: () => ipcRenderer.invoke('get-dispatch-guides'),
-  addDispatchGuide: (dispatchGuideNumber) => ipcRenderer.invoke('add-dispatch-guide', dispatchGuideNumber)
+  addDispatchGuide: (guideData) => ipcRenderer.invoke('add-dispatch-guide', guideData),
+  updateDispatchGuide: (id, guideData) => ipcRenderer.invoke('update-dispatch-guide', id, guideData),
+  deleteDispatchGuide: (id) => ipcRenderer.invoke('delete-dispatch-guide', id),
 })
 
 // Use `contextBridge` APIs to expose Electron APIs to

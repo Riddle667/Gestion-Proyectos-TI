@@ -7,11 +7,24 @@ const db = getDatabase()
 ipcMain.handle('get-dispatch-guides', () => {
   try {
     console.log('📋 Consultando guías de despacho...')
-    const rows = db.prepare('SELECT * FROM DispatchGuide ORDER BY id DESC').all()
-    console.log(`📋 Obtenidas ${rows.length} guías de despacho`)
+
+    const rows = db
+      .prepare(
+        `
+      SELECT
+        DispatchGuide.*,
+        PurchaseOrder.purchase_order_number AS purchase_order_number
+      FROM DispatchGuide
+      LEFT JOIN PurchaseOrder ON DispatchGuide.purchase_order_id = PurchaseOrder.id
+      ORDER BY DispatchGuide.id DESC
+    `
+      )
+      .all()
+
+    console.log(`📋 Obtenidas ${rows.length} guías de despacho con datos relacionados`)
     return rows
   } catch (err) {
-    console.error('❌ Error al consultar DispatchGuide:', err)
+    console.error('❌ Error al consultar DispatchGuide con joins:', err)
     throw err
   }
 })
@@ -28,10 +41,9 @@ ipcMain.handle('add-dispatch-guide', (event, dispatchGuideData) => {
     city = null,
     contact = null,
     transport_type = null,
-    purchase_order = null
+    purchase_order_id = null
   } = dispatchGuideData
 
-  // Validar campo requerido
   if (!dispatch_guide_number || !dispatch_guide_number.trim()) {
     throw new Error('El número de guía de despacho es obligatorio')
   }
@@ -39,7 +51,7 @@ ipcMain.handle('add-dispatch-guide', (event, dispatchGuideData) => {
   try {
     const stmt = db.prepare(`
       INSERT INTO DispatchGuide
-      (dispatch_guide_number, recipient_name, rut, business_activity, address, district, city, contact, transport_type, purchase_order)
+      (dispatch_guide_number, recipient_name, rut, business_activity, address, district, city, contact, transport_type, purchase_order_id)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
@@ -53,7 +65,7 @@ ipcMain.handle('add-dispatch-guide', (event, dispatchGuideData) => {
       city,
       contact,
       transport_type,
-      purchase_order
+      purchase_order_id
     )
 
     console.log(`📋 Guía de despacho agregada con ID: ${result.lastInsertRowid}`)

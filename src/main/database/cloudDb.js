@@ -1,4 +1,3 @@
-// src/main/database/cloudDb.js
 import mysql from 'mysql2/promise'
 
 const mysqlConfig = {
@@ -9,14 +8,14 @@ const mysqlConfig = {
   port: 3306
 }
 
-// Conexión persistente
 let cloudConnection = null
 
-// Inicializa la base de datos en la nube y crea las tablas
 export async function initCloudDatabase() {
   try {
     cloudConnection = await mysql.createConnection(mysqlConfig)
     console.log('✅ Conectado a la base de datos en la nube')
+
+    await cloudConnection.execute(`SET foreign_key_checks = 0`)
 
     await cloudConnection.execute(`
       CREATE TABLE IF NOT EXISTS User (
@@ -24,20 +23,18 @@ export async function initCloudDatabase() {
         email VARCHAR(255) UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role VARCHAR(50) DEFAULT 'viewer'
-      )
+      ) ENGINE=InnoDB
     `)
 
     await cloudConnection.execute(`
-      CREATE TABLE IF NOT EXISTS Invoice (
+      CREATE TABLE IF NOT EXISTS PurchaseOrder (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        invoice_number VARCHAR(100) NOT NULL UNIQUE,
-        date DATE NOT NULL,
-        company_name VARCHAR(255) NOT NULL,
-        net_amount DECIMAL(12,2) NOT NULL,
-        tax_iva DECIMAL(12,2) NOT NULL,
-        purchase_order VARCHAR(100),
-        dispatch_guide VARCHAR(100)
-      )
+        purchase_order_number VARCHAR(100) NOT NULL UNIQUE,
+        company_name VARCHAR(255),
+        company_representative VARCHAR(255),
+        date DATE,
+        order_amount DECIMAL(12,2)
+      ) ENGINE=InnoDB
     `)
 
     await cloudConnection.execute(`
@@ -52,31 +49,41 @@ export async function initCloudDatabase() {
         city VARCHAR(100),
         contact VARCHAR(100),
         transport_type VARCHAR(100),
-        purchase_order VARCHAR(100)
-      )
+        purchase_order_id INT NULL,
+        FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
+          ON DELETE SET NULL ON UPDATE CASCADE
+      ) ENGINE=InnoDB
     `)
 
     await cloudConnection.execute(`
-      CREATE TABLE IF NOT EXISTS PurchaseOrder (
+      CREATE TABLE IF NOT EXISTS Invoice (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        purchase_order_number VARCHAR(100) NOT NULL UNIQUE,
-        company_name VARCHAR(255),
-        company_representative VARCHAR(255),
-        date DATE,
-        order_amount DECIMAL(12,2)
-      )
+        invoice_number VARCHAR(100) NOT NULL UNIQUE,
+        date DATE NOT NULL,
+        company_name VARCHAR(255) NOT NULL,
+        net_amount DECIMAL(12,2) NOT NULL,
+        tax_iva DECIMAL(12,2) NOT NULL,
+        purchase_order_id INT NULL,
+        dispatch_guide_id INT NULL,
+        FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
+          ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (dispatch_guide_id) REFERENCES DispatchGuide(id)
+          ON DELETE SET NULL ON UPDATE CASCADE
+      ) ENGINE=InnoDB
     `)
 
-    console.log('✅ Tablas creadas/verificadas en la nube')
+    await cloudConnection.execute(`SET foreign_key_checks = 1`)
+    console.log('✅ Tablas con claves foráneas creadas/verificadas')
   } catch (err) {
     console.error('❌ Error conectando o creando tablas en la nube:', err.message)
   }
 }
 
-// Devuelve la conexión activa
 export function getCloudDatabase() {
   if (!cloudConnection) {
-    throw new Error('❌ La conexión cloud no está inicializada. Llama a initCloudDatabase() primero.')
+    throw new Error(
+      '❌ La conexión cloud no está inicializada. Llama a initCloudDatabase() primero.'
+    )
   }
   return cloudConnection
 }
