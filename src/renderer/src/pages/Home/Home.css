@@ -1,16 +1,48 @@
 .main-content {
-  margin-left: 230px; /* Compensa el ancho del sidebar fijo */
+  margin-left: 230px;
   height: 100vh;
-  padding: 2rem;
+  width: calc(100vw - 230px);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 1s ease-in-out;
-  z-index: 1;
-  position: relative;
   box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.03) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.03) 50%,
+      rgba(0, 0, 0, 0.03) 75%,
+      transparent 75%,
+      transparent
+    ),
+    linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.02) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.02) 50%,
+      rgba(0, 0, 0, 0.02) 75%,
+      transparent 75%,
+      transparent
+    ),
+    #ffffff;
+  background-size: 80px 80px;
+  animation: diagonalMove 30s linear infinite;
+  z-index: 0;
+}
+
+@keyframes diagonalMove {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 160px 160px, -160px -160px;
+  }
 }
 
 .welcome-box {
@@ -20,7 +52,9 @@
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
   color: #007a3d;
   text-align: center;
-  animation: floatIn 1s ease-in-out;
+  animation: fadeIn 1s ease-in-out, floatIn 1s ease-in-out;
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-box h2 {
@@ -47,7 +81,7 @@
 @keyframes floatIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
