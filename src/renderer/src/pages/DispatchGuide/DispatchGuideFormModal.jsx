@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types'
 
-export const InvoiceFormModal = ({
+const DispatchGuideFormModal = ({
   isOpen,
   isEditing,
   formData,
-  purchaseOrders,
   purchaseOrder,
-  dispatchGuides,
-  dispatchGuide,
+  purchaseOrders,
   onChange,
   onCancel,
   onSave
@@ -22,30 +20,42 @@ export const InvoiceFormModal = ({
     <div className="modal-overlay" onClick={handleBackdrop}>
       <div className="modal-content">
         <div className="modal-header">
-          <h3>{isEditing ? 'Editar Factura' : 'Nueva Factura'}</h3>
+          <h3>{isEditing ? 'Editar Guía de Despacho' : 'Nueva Guía de Despacho'}</h3>
           <button className="btn-close" onClick={onCancel}>
             ×
           </button>
         </div>
-
         <div className="modal-body">
           <div className="form-grid">
             {[
               {
-                id: 'invoiceNumber',
-                label: 'N° Factura *',
+                id: 'dispatchGuideNumber',
+                label: 'N° Guía *',
                 type: 'text',
-                placeholder: 'Ej: F-0001'
+                placeholder: 'Ej: GD-2025-001'
               },
-              { id: 'date', label: 'Fecha', type: 'date' },
               {
-                id: 'companyName',
-                label: 'Empresa',
+                id: 'recipientName',
+                label: 'Nombre del Destinatario',
                 type: 'text',
-                placeholder: 'Ej: Constructora XYZ'
+                placeholder: 'Ej: Juan Pérez'
               },
-              { id: 'netAmount', label: 'Monto Neto', type: 'number', placeholder: 'Ej: 100000' },
-              { id: 'taxIva', label: 'IVA', type: 'number', placeholder: 'Ej: 19' }
+              { id: 'rut', label: 'RUT', type: 'text', placeholder: 'Ej: 12.345.678-9' },
+              {
+                id: 'businessActivity',
+                label: 'Actividad Comercial',
+                type: 'text',
+                placeholder: 'Ej: Servicios de consultoría'
+              },
+              {
+                id: 'address',
+                label: 'Dirección',
+                type: 'text',
+                placeholder: 'Ej: Av. Providencia 123'
+              },
+              { id: 'district', label: 'Comuna', type: 'text', placeholder: 'Ej: Providencia' },
+              { id: 'city', label: 'Ciudad', type: 'text', placeholder: 'Ej: Santiago' },
+              { id: 'contact', label: 'Contacto', type: 'text', placeholder: 'Ej: +56 9 1234 5678' }
             ].map(({ id, label, type, placeholder }) => (
               <div key={id} className="form-group">
                 <label htmlFor={id}>{label}</label>
@@ -58,6 +68,23 @@ export const InvoiceFormModal = ({
                 />
               </div>
             ))}
+
+            <div className="form-group">
+              <label htmlFor="transportType">Tipo de Transporte</label>
+              <select
+                id="transportType"
+                value={formData.transportType}
+                onChange={(e) => onChange('transportType', e.target.value)}
+              >
+                <option value="">Seleccionar...</option>
+                <option value="terrestre">Terrestre</option>
+                <option value="aereo">Aéreo</option>
+                <option value="maritimo">Marítimo</option>
+                <option value="ferroviario">Ferroviario</option>
+                <option value="propio">Transporte Propio</option>
+                <option value="terceros">Transporte de Terceros</option>
+              </select>
+            </div>
 
             <div className="form-group">
               <label htmlFor="purchaseOrderId">Orden de Compra</label>
@@ -81,28 +108,6 @@ export const InvoiceFormModal = ({
                 {console.log(purchaseOrder)}
               </select>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="dispatchGuideId">Guía de Despacho</label>
-              <select
-                id="dispatchGuideId"
-                value={formData.dispatchGuideId}
-                onChange={(e) => onChange('dispatchGuideId', e.target.value)}
-              >
-                <option value="">-- Seleccionar --</option>
-                {dispatchGuides && dispatchGuides.length > 0 ? (
-                  dispatchGuides.map((dg) => (
-                    <option key={dg.id} value={dg.id}>
-                      {dg.dispatch_guide_number}
-                    </option>
-                  ))
-                ) : dispatchGuide ? (
-                  <option value={dispatchGuide.id}>{dispatchGuide.dispatch_guide_number}</option>
-                ) : (
-                  <option disabled>No hay guías de despacho disponibles</option>
-                )}
-              </select>
-            </div>
           </div>
         </div>
 
@@ -112,8 +117,16 @@ export const InvoiceFormModal = ({
           </button>
           <button
             className="btn-primary"
-            onClick={onSave}
-            disabled={!formData.invoiceNumber.trim()}
+            onClick={() => onSave(formData)}
+            disabled={
+              !formData.dispatchGuideNumber ||
+              !formData.recipientName ||
+              !formData.rut ||
+              !formData.address ||
+              !formData.city ||
+              !formData.purchaseOrderId ||
+              !formData.transportType
+            }
           >
             {isEditing ? 'Actualizar' : 'Crear Factura'}
           </button>
@@ -123,23 +136,19 @@ export const InvoiceFormModal = ({
   )
 }
 
-InvoiceFormModal.propTypes = {
+DispatchGuideFormModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   isEditing: PropTypes.bool.isRequired,
   formData: PropTypes.object.isRequired,
-  purchaseOrders: PropTypes.array.isRequired,
   purchaseOrder: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     purchase_order_number: PropTypes.string
   }),
+  purchaseOrders: PropTypes.array.isRequired,
   dispatchGuides: PropTypes.array.isRequired,
-  dispatchGuide: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dispatch_guide_number: PropTypes.string
-  }),
   onChange: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired
 }
 
-export default InvoiceFormModal
+export default DispatchGuideFormModal
