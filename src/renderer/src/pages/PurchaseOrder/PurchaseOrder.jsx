@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react'
 import './PurchaseOrder.css'
+import InvoiceFormModal from '../Invoices/InvoiceFormModal'
+import DispatchGuideFormModal from '../DispatchGuide/DispatchGuideFormModal'
+import useModalAndFeedback from '../../components/useModalAndFeedback'
 
 const PurchaseOrder = () => {
   const [orders, setOrders] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [isDispatchGuideModalOpen, setIsDispatchGuideModalOpen] = useState(false)
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+  const [newOrder, setNewOrder] = useState(null)
+  const [newGuide, setNewGuide] = useState(null)
+  const [askInvoiceAfterGuide, setAskInvoiceAfterGuide] = useState(false)
   const [formData, setFormData] = useState({
     purchaseOrderNumber: '',
     companyName: '',
@@ -11,7 +20,34 @@ const PurchaseOrder = () => {
     date: '',
     orderAmount: ''
   })
-  const [user, setUser] = useState(null)
+  const [dispatchGuideFormData, setDispatchGuideFormData] = useState({
+    dispatchGuideNumber: '',
+    recipientName: '',
+    rut: '',
+    businessActivity: '',
+    address: '',
+    district: '',
+    purchaseOrderId: ''
+  })
+  const [invoiceFormData, setInvoiceFormData] = useState({
+    invoiceNumber: '',
+    date: '',
+    companyName: '',
+    netAmount: '',
+    taxIva: '',
+    purchaseOrderId: '',
+    dispatchGuideId: ''
+  })
+  const {
+    modalVisible,
+    modalMessage,
+    feedbackMessage,
+    feedbackType,
+    openModal,
+    closeModal,
+    confirm,
+    showFeedback
+  } = useModalAndFeedback()
 
   useEffect(() => {
     fetchOrders()
@@ -19,6 +55,24 @@ const PurchaseOrder = () => {
       setUser(u)
     })
   }, [])
+
+  useEffect(() => {
+    if (!isDispatchGuideModalOpen && askInvoiceAfterGuide) {
+      openModal('¿Deseas crear una Factura para esta orden?', async () => {
+        setInvoiceFormData({
+          invoiceNumber: '',
+          date: new Date().toISOString().split('T')[0],
+          companyName: newOrder?.company_name || '',
+          netAmount: newOrder?.order_amount || '',
+          taxIva: '19',
+          purchaseOrderId: newOrder?.id || '',
+          dispatchGuideId: '' // podrías vincular luego
+        })
+        setIsInvoiceModalOpen(true)
+      })
+      setAskInvoiceAfterGuide(false)
+    }
+  }, [isDispatchGuideModalOpen])
 
   const fetchOrders = async () => {
     try {
@@ -30,22 +84,25 @@ const PurchaseOrder = () => {
   }
 
   const handleAddOrder = async () => {
-    // Validar campos requeridos
     if (!formData.purchaseOrderNumber.trim()) {
       alert('El número de orden es requerido')
       return
     }
 
     try {
-      await window.electronAPI.addPurchaseOrder({
+      // 1. Crear orden de compra
+      const newOrder = {
         purchase_order_number: formData.purchaseOrderNumber,
         company_name: formData.companyName,
         company_representative: formData.companyRepresentative,
         date: formData.date,
         order_amount: formData.orderAmount
-      })
+      }
 
-      // Resetear formulario
+      const newOrderId = await window.electronAPI.addPurchaseOrder(newOrder)
+      await setNewOrder(newOrderId)
+
+      // 2. Resetear formulario y cerrar modal
       setFormData({
         purchaseOrderNumber: '',
         companyName: '',
@@ -53,11 +110,83 @@ const PurchaseOrder = () => {
         date: '',
         orderAmount: ''
       })
-
       setIsModalOpen(false)
+
+      // 3. Recargar órdenes
       fetchOrders()
+
+      openModal('¿Deseas crear una Guía de Despacho para esta orden?', async () => {
+        setDispatchGuideFormData({
+          dispatchGuideNumber: '',
+          recipientName: newOrder.company_representative || '',
+          rut: '',
+          businessActivity: '',
+          address: '',
+          district: '',
+          city: '',
+          contact: '',
+          transportType: '',
+          purchaseOrderId: newOrderId
+        })
+        setIsDispatchGuideModalOpen(true)
+        setAskInvoiceAfterGuide(true)
+      })
     } catch (error) {
-      alert('Error al agregar orden: ' + error)
+      alert('❌ Error al agregar orden: ' + error)
+    }
+  }
+
+  const handleSaveInvoice = async () => {
+    const payload = {
+      invoice_number: invoiceFormData.invoiceNumber,
+      date: invoiceFormData.date,
+      company_name: invoiceFormData.companyName,
+      net_amount: invoiceFormData.netAmount,
+      tax_iva: invoiceFormData.taxIva,
+      purchase_order_id: invoiceFormData.purchaseOrderId || null,
+      dispatch_guide_id: invoiceFormData.dispatchGuideId || null
+    }
+
+    try {
+      await window.electronAPI.addInvoice(payload)
+
+      setIsInvoiceModalOpen(false)
+      showFeedback('✅ Factura creada correctamente.', 'success')
+
+      // Si tienes una función para refrescar facturas, puedes llamarla aquí
+      // fetchInvoices()
+    } catch (error) {
+      console.error('❌ Error al guardar la factura:', error)
+      showFeedback('❌ Error al guardar la factura.', 'error')
+    }
+  }
+
+  const handleSaveDispatchGuide = async () => {
+    const payload = {
+      dispatch_guide_number: dispatchGuideFormData.dispatchGuideNumber,
+      recipient_name: dispatchGuideFormData.recipientName,
+      rut: dispatchGuideFormData.rut,
+      business_activity: dispatchGuideFormData.businessActivity,
+      address: dispatchGuideFormData.address,
+      district: dispatchGuideFormData.district,
+      city: dispatchGuideFormData.city,
+      contact: dispatchGuideFormData.contact,
+      transport_type: dispatchGuideFormData.transportType,
+      purchase_order_id: dispatchGuideFormData.purchaseOrderId || null
+    }
+
+    try {
+      const newGuide = await window.electronAPI.addDispatchGuide(payload)
+
+      await setNewGuide(newGuide)
+      setIsDispatchGuideModalOpen(false)
+      showFeedback('✅ Guía de despacho creada correctamente.', 'success')
+
+      // Si tienes una función para actualizar la lista de guías
+      // fetchDispatchGuides()
+    } catch (error) {
+      console.error('❌ Error al guardar la guía de despacho:', error)
+      showFeedback('❌ Error al guardar la guía de despacho.', 'error')
     }
   }
 
@@ -231,6 +360,42 @@ const PurchaseOrder = () => {
           </div>
         </div>
       )}
+      {/* Modal para Guía de Despacho */}
+      <DispatchGuideFormModal
+        isOpen={isDispatchGuideModalOpen}
+        formData={dispatchGuideFormData}
+        purchaseOrder={newOrder}
+        onChange={(field, value) =>
+          setDispatchGuideFormData((prev) => ({ ...prev, [field]: value }))
+        }
+        onCancel={() => setIsDispatchGuideModalOpen(false)}
+        onSave={handleSaveDispatchGuide} // Debes definir esta función
+      />
+      {/* Modal para Factura */}
+      <InvoiceFormModal
+        isOpen={isInvoiceModalOpen}
+        isEditing={false}
+        formData={invoiceFormData}
+        purchaseOrder={newOrder}
+        dispatchGuide={newGuide}
+        onChange={(field, value) => setInvoiceFormData((prev) => ({ ...prev, [field]: value }))}
+        onCancel={() => setIsInvoiceModalOpen(false)}
+        onSave={handleSaveInvoice} // Debes definir esta función
+      />
+      {console.log(newOrder)}
+      {modalVisible && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>¿Confirmar acción?</h2>
+            <p>{modalMessage}</p>
+            <div className="modal-buttons">
+              <button onClick={confirm}>Confirmar</button>
+              <button onClick={closeModal}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {feedbackMessage && <div className={`feedback-toast ${feedbackType}`}>{feedbackMessage}</div>}
     </div>
   )
 }
