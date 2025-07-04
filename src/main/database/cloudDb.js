@@ -1,11 +1,13 @@
 import mysql from 'mysql2/promise'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const mysqlConfig = {
-  host: '127.0.0.1',
-  user: 'root',
-  password: '123456',
-  database: 'montecristo',
-  port: 3306
+  host: process.env.DB_HOST,     // ejemplo: montecristo-db.filess.io
+  user: process.env.DB_USER,     // ejemplo: admin
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME, // ejemplo: montecristo
+  port: process.env.DB_PORT || 3306
 }
 
 let cloudConnection = null
