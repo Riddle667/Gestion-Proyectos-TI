@@ -4,11 +4,14 @@
   width: calc(100vw - 230px);
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  gap: 1.5rem;
   box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
-  overflow: hidden;
+  overflow-y: auto;
   background:
     linear-gradient(
       135deg,
@@ -46,25 +49,50 @@
 }
 
 .welcome-box {
-  background-color: #e6f9ee;
+  background-color: #4CAF50;
+  color: white;
   padding: 2rem 3rem;
   border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  color: #007a3d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: fadeIn 1s ease-in-out, floatIn 1s ease-in-out;
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 800px;
 }
 
 .welcome-box h2 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  margin-top: 0;
 }
 
 .welcome-box p {
   font-size: 1.1rem;
-  color: #555;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
+}
+
+/* Nueva sección para la tabla */
+.table-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeIn 1s ease-in-out 0.3s both;
+  position: relative;
+  z-index: 1;
+}
+
+.table-section h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 @keyframes fadeIn {
@@ -86,5 +114,393 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Estilos de tabla importados de invoices.css */
+.no-invoices {
+  text-align: center;
+  font-style: italic;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+  border-radius: 6px;
+  max-width: 100%;
+  max-height: 400px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabla */
+.table-section table,
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  color: black;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.table-section th,
+.table-section td,
+.table-container th,
+.table-container td {
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.table-section th,
+.table-container th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+.table-section td,
+.table-container td {
+  font-size: 0.85rem;
+  background-color: white;
+}
+
+.table-section .amount,
+.table-container .amount {
+  font-weight: 600;
+  color: #4CAF50;
+  text-align: right;
+}
+
+.table-section tr:hover,
+.table-container tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table-section tbody tr,
+.table-container tbody tr {
+  background-color: white;
+}
+
+.table-section tbody tr:nth-child(even),
+.table-container tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table-section tbody tr:hover,
+.table-container tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Botones de iconos */
+.icon-btn {
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn.edit {
+  color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.icon-btn.edit:hover {
+  background-color: rgba(25, 118, 210, 0.2);
+}
+
+.icon-btn.delete {
+  color: #d32f2f;
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.icon-btn.delete:hover {
+  background-color: rgba(211, 47, 47, 0.2);
+}
+
+.icon-group {
+  display: flex;
+  gap: 6px;
+}
+
+/* ========== ESTILOS DEL MODAL ========== */
+
+/* Overlay del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInOverlay 0.3s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Contenido del modal */
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 700px;
+  overflow-y: auto;
+  animation: slideInModal 0.3s ease-out;
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header del modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+/* Cuerpo del modal */
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Detalles de la factura */
+.invoice-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-section {
+  background-color: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid #4CAF50;
+}
+
+.detail-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+}
+
+.detail-value.amount {
+  font-weight: 600;
+  color: #4CAF50;
+  font-size: 1.1rem;
+}
+
+/* Estilo especial para el total */
+.detail-item.total {
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.detail-item.total label {
+  color: #2e7d32;
+  font-size: 1.1rem;
+}
+
+.total-amount {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  color: #2e7d32 !important;
+}
+
+/* Footer del modal */
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #45a049;
+}
+
+/* Responsive para el modal */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95vw;
+    max-height: 95vh;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1rem;
+  }
+  
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-section {
+    padding: 1rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 98vw;
+    max-height: 98vh;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 0.75rem;
+  }
+  
+  .detail-section {
+    padding: 0.75rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .main-content {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+
+  .welcome-box {
+    padding: 1.5rem;
+  }
+
+  .table-section {
+    padding: 1rem;
+  }
+
+  .table-section table,
+  .table-container table {
+    font-size: 0.8rem;
+  }
+
+  .table-section th,
+  .table-section td,
+  .table-container th,
+  .table-container td {
+    padding: 0.4rem;
+  }
+
+  .welcome-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .welcome-box p {
+    font-size: 1rem;
+  }
+
+  .table-section h3 {
+    font-size: 1.2rem;
   }
 }
