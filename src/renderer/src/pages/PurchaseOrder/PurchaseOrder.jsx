@@ -12,7 +12,6 @@ const PurchaseOrder = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
   const [newOrder, setNewOrder] = useState(null)
   const [newGuide, setNewGuide] = useState(null)
-  const [askInvoiceAfterGuide, setAskInvoiceAfterGuide] = useState(false)
   const [formData, setFormData] = useState({
     purchaseOrderNumber: '',
     companyName: '',
@@ -38,13 +37,14 @@ const PurchaseOrder = () => {
     purchaseOrderId: '',
     dispatchGuideId: ''
   })
+  const [askInvoiceAfterGuide, setAskInvoiceAfterGuide] = useState(false)
   const {
     modalVisible,
     modalMessage,
     feedbackMessage,
     feedbackType,
     openModal,
-    closeModal,
+    cancel,
     confirm,
     showFeedback
   } = useModalAndFeedback()
@@ -56,24 +56,6 @@ const PurchaseOrder = () => {
     })
   }, [])
 
-  useEffect(() => {
-    if (!isDispatchGuideModalOpen && askInvoiceAfterGuide) {
-      openModal('¿Deseas crear una Factura para esta orden?', async () => {
-        setInvoiceFormData({
-          invoiceNumber: '',
-          date: new Date().toISOString().split('T')[0],
-          companyName: newOrder?.company_name || '',
-          netAmount: newOrder?.order_amount || '',
-          taxIva: '19',
-          purchaseOrderId: newOrder?.id || '',
-          dispatchGuideId: '' // podrías vincular luego
-        })
-        setIsInvoiceModalOpen(true)
-      })
-      setAskInvoiceAfterGuide(false)
-    }
-  }, [isDispatchGuideModalOpen])
-
   const fetchOrders = async () => {
     try {
       const data = await window.electronAPI.getPurchaseOrders()
@@ -83,6 +65,26 @@ const PurchaseOrder = () => {
     }
   }
 
+  useEffect(() => {
+    if (!isDispatchGuideModalOpen && askInvoiceAfterGuide) {
+      confirmModal('¿Deseas crear una Factura para esta orden?').then((wantsInvoice) => {
+        if (wantsInvoice && newOrder) {
+          setInvoiceFormData({
+            invoiceNumber: '',
+            date: new Date().toISOString().split('T')[0],
+            companyName: newOrder.company_name || '',
+            netAmount: newOrder.order_amount || '',
+            taxIva: '19',
+            purchaseOrderId: newOrder.id,
+            dispatchGuideId: ''
+          })
+          setIsInvoiceModalOpen(true)
+        }
+      })
+      setAskInvoiceAfterGuide(false)
+    }
+  }, [isDispatchGuideModalOpen, askInvoiceAfterGuide])
+
   const handleAddOrder = async () => {
     if (!formData.purchaseOrderNumber.trim()) {
       alert('El número de orden es requerido')
@@ -90,7 +92,7 @@ const PurchaseOrder = () => {
     }
 
     try {
-      // 1. Crear orden de compra
+      // 1. Crear la orden
       const newOrder = {
         purchase_order_number: formData.purchaseOrderNumber,
         company_name: formData.companyName,
@@ -102,7 +104,7 @@ const PurchaseOrder = () => {
       const newOrderId = await window.electronAPI.addPurchaseOrder(newOrder)
       await setNewOrder(newOrderId)
 
-      // 2. Resetear formulario y cerrar modal
+      // 2. Reset y cerrar modal
       setFormData({
         purchaseOrderNumber: '',
         companyName: '',
@@ -112,10 +114,14 @@ const PurchaseOrder = () => {
       })
       setIsModalOpen(false)
 
-      // 3. Recargar órdenes
+      // 3. Refrescar datos
       fetchOrders()
 
-      openModal('¿Deseas crear una Guía de Despacho para esta orden?', async () => {
+      // 4. Preguntar por guía de despacho
+      const wantsGuide = await confirmModal('¿Deseas crear una Guía de Despacho para esta orden?')
+
+      console.log('wantsGuide:', wantsGuide)
+      if (wantsGuide) {
         setDispatchGuideFormData({
           dispatchGuideNumber: '',
           recipientName: newOrder.company_representative || '',
@@ -130,11 +136,22 @@ const PurchaseOrder = () => {
         })
         setIsDispatchGuideModalOpen(true)
         setAskInvoiceAfterGuide(true)
-      })
+      }
+
+      setAskInvoiceAfterGuide(true)
     } catch (error) {
       alert('❌ Error al agregar orden: ' + error)
     }
   }
+
+  const confirmModal = (message) =>
+    new Promise((resolve) => {
+      openModal(
+        message,
+        () => resolve(true),
+        () => resolve(false)
+      )
+    })
 
   const handleSaveInvoice = async () => {
     const payload = {
@@ -382,7 +399,6 @@ const PurchaseOrder = () => {
         onCancel={() => setIsInvoiceModalOpen(false)}
         onSave={handleSaveInvoice} // Debes definir esta función
       />
-      {console.log(newOrder)}
       {modalVisible && (
         <div className="modal-overlay">
           <div className="modal">
@@ -390,11 +406,12 @@ const PurchaseOrder = () => {
             <p>{modalMessage}</p>
             <div className="modal-buttons">
               <button onClick={confirm}>Confirmar</button>
-              <button onClick={closeModal}>Cancelar</button>
+              <button onClick={cancel}>Cancelar</button>
             </div>
           </div>
         </div>
       )}
+
       {feedbackMessage && <div className={`feedback-toast ${feedbackType}`}>{feedbackMessage}</div>}
     </div>
   )
