@@ -38,13 +38,19 @@ export const InvoiceFormModal = ({
                 placeholder: 'Ej: F-0001'
               },
               { id: 'date', label: 'Fecha', type: 'date' },
+              { id: 'endDate', label: 'Fecha de Término', type: 'date' },
               {
                 id: 'companyName',
                 label: 'Empresa',
                 type: 'text',
                 placeholder: 'Ej: Constructora XYZ'
               },
-              { id: 'netAmount', label: 'Monto Neto', type: 'number', placeholder: 'Ej: 100000' },
+              {
+                id: 'netAmount',
+                label: 'Monto Neto',
+                type: 'number',
+                placeholder: 'Ej: 100000'
+              },
               { id: 'taxIva', label: 'IVA', type: 'number', placeholder: 'Ej: 19' }
             ].map(({ id, label, type, placeholder }) => (
               <div key={id} className="form-group">
@@ -67,18 +73,17 @@ export const InvoiceFormModal = ({
                 onChange={(e) => onChange('purchaseOrderId', e.target.value)}
               >
                 <option value="">-- Seleccionar --</option>
-                {purchaseOrders && purchaseOrders.length > 0 ? (
-                  purchaseOrders.map((po) => (
-                    <option key={po.id} value={po.id}>
-                      {po.purchase_order_number}
-                    </option>
-                  ))
-                ) : purchaseOrder ? (
-                  <option value={purchaseOrder.id}>{purchaseOrder.purchase_order_number}</option>
-                ) : (
-                  <option disabled>No hay órdenes de compra disponibles</option>
-                )}
-                {console.log(purchaseOrder)}
+                {purchaseOrders?.length > 0
+                  ? purchaseOrders.map((po) => (
+                      <option key={po.id} value={po.id}>
+                        {po.purchase_order_number}
+                      </option>
+                    ))
+                  : purchaseOrder && (
+                      <option value={purchaseOrder.id}>
+                        {purchaseOrder.purchase_order_number}
+                      </option>
+                    )}
               </select>
             </div>
 
@@ -90,17 +95,17 @@ export const InvoiceFormModal = ({
                 onChange={(e) => onChange('dispatchGuideId', e.target.value)}
               >
                 <option value="">-- Seleccionar --</option>
-                {dispatchGuides && dispatchGuides.length > 0 ? (
-                  dispatchGuides.map((dg) => (
-                    <option key={dg.id} value={dg.id}>
-                      {dg.dispatch_guide_number}
-                    </option>
-                  ))
-                ) : dispatchGuide ? (
-                  <option value={dispatchGuide.id}>{dispatchGuide.dispatch_guide_number}</option>
-                ) : (
-                  <option disabled>No hay guías de despacho disponibles</option>
-                )}
+                {dispatchGuides?.length > 0
+                  ? dispatchGuides.map((dg) => (
+                      <option key={dg.id} value={dg.id}>
+                        {dg.dispatch_guide_number}
+                      </option>
+                    ))
+                  : dispatchGuide && (
+                      <option value={dispatchGuide.id}>
+                        {dispatchGuide.dispatch_guide_number}
+                      </option>
+                    )}
               </select>
             </div>
           </div>
@@ -128,15 +133,9 @@ InvoiceFormModal.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   formData: PropTypes.object.isRequired,
   purchaseOrders: PropTypes.array.isRequired,
-  purchaseOrder: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    purchase_order_number: PropTypes.string
-  }),
+  purchaseOrder: PropTypes.object,
   dispatchGuides: PropTypes.array.isRequired,
-  dispatchGuide: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    dispatch_guide_number: PropTypes.string
-  }),
+  dispatchGuide: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired
