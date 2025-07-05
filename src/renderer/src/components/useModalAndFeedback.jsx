@@ -4,12 +4,14 @@ export default function useModalAndFeedback() {
   const [modalVisible, setModalVisible] = useState(false)
   const [modalMessage, setModalMessage] = useState('')
   const [onConfirm, setOnConfirm] = useState(() => () => {})
+  const [onCancel, setOnCancel] = useState(() => () => {})
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackType, setFeedbackType] = useState('')
 
-  const openModal = (message, confirmAction) => {
+  const openModal = (message, confirmAction, cancelAction = () => {}) => {
     setModalMessage(message)
     setOnConfirm(() => confirmAction)
+    setOnCancel(() => cancelAction)
     setModalVisible(true)
   }
 
@@ -17,6 +19,7 @@ export default function useModalAndFeedback() {
     setModalVisible(false)
     setModalMessage('')
     setOnConfirm(() => () => {})
+    setOnCancel(() => () => {})
   }
 
   const confirm = async () => {
@@ -28,6 +31,26 @@ export default function useModalAndFeedback() {
     } finally {
       closeModal()
     }
+  }
+
+  const cancel = async () => {
+    try {
+      await onCancel()
+    } catch (err) {
+      console.error(err)
+    } finally {
+      closeModal()
+    }
+  }
+
+  const confirmModal = (message) => {
+    return new Promise((resolve) => {
+      openModal(
+        message,
+        () => resolve(true),
+        () => resolve(false)
+      )
+    })
   }
 
   const showFeedback = (message, type = 'success') => {
@@ -47,6 +70,8 @@ export default function useModalAndFeedback() {
     openModal,
     closeModal,
     confirm,
+    cancel,
+    confirmModal,
     showFeedback
   }
 }
