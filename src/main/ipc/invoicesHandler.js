@@ -36,6 +36,7 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
   const {
     invoice_number,
     date,
+    end_date,
     company_name = null,
     net_amount = null,
     tax_iva = null,
@@ -50,13 +51,14 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
   try {
     const stmt = db.prepare(`
       INSERT INTO Invoice
-      (invoice_number, date, company_name, net_amount, tax_iva, purchase_order_id, dispatch_guide_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      (invoice_number, date, end_date, company_name, net_amount, tax_iva, purchase_order_id, dispatch_guide_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const result = stmt.run(
       invoice_number,
       date,
+      end_date,
       company_name,
       net_amount,
       tax_iva,
@@ -77,6 +79,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
   const {
     invoice_number,
     date,
+    end_date = null,
     company_name = null,
     net_amount = null,
     tax_iva = null,
@@ -93,6 +96,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
       UPDATE Invoice
       SET invoice_number = ?,
           date = ?,
+          end_date = ?,
           company_name = ?,
           net_amount = ?,
           tax_iva = ?,
@@ -104,6 +108,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
     const result = stmt.run(
       invoice_number,
       date,
+      end_date,
       company_name,
       net_amount,
       tax_iva,

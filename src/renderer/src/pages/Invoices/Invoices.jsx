@@ -15,6 +15,7 @@ const Invoices = () => {
   const [formData, setFormData] = useState({
     invoiceNumber: '',
     date: '',
+    endDate: '',
     companyName: '',
     netAmount: '',
     taxIva: '',
@@ -57,6 +58,7 @@ const Invoices = () => {
     setFormData({
       invoiceNumber: invoice.invoice_number,
       date: invoice.date,
+      endDate: invoice.end_date || '',
       companyName: invoice.company_name,
       netAmount: invoice.net_amount,
       taxIva: invoice.tax_iva,
@@ -80,6 +82,7 @@ const Invoices = () => {
     const payload = {
       invoice_number: formData.invoiceNumber,
       date: formData.date,
+      end_date: formData.endDate,
       company_name: formData.companyName,
       net_amount: formData.netAmount,
       tax_iva: formData.taxIva,

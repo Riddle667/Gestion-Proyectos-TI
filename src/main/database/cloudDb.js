@@ -62,6 +62,7 @@ export async function initCloudDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
         date DATE NOT NULL,
+        end_date DATE NOT NULL,
         company_name VARCHAR(255) NOT NULL,
         net_amount DECIMAL(12,2) NOT NULL,
         tax_iva DECIMAL(12,2) NOT NULL,

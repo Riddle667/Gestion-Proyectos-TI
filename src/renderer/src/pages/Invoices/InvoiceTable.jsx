@@ -24,6 +24,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete }) => {
             <th>ID</th>
             <th>N° Factura</th>
             <th>Fecha</th>
+            <th>Fecha Término</th>
             <th>Empresa</th>
             <th>Neto</th>
             <th>IVA</th>
@@ -38,6 +39,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete }) => {
               <td>{inv.id}</td>
               <td>{inv.invoice_number}</td>
               <td>{inv.date}</td>
+              <td>{inv.end_date || '-'}</td>
               <td>{inv.company_name}</td>
               <td>{formatCurrency(inv.net_amount)}</td>
               <td>{inv.tax_iva}%</td>
