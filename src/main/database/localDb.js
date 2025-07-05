@@ -58,6 +58,7 @@ db.exec(`
     company_name TEXT NOT NULL,
     net_amount REAL NOT NULL,
     tax_iva REAL NOT NULL,
+    paid BOOLEAN NOT NULL DEFAULT 0,
     purchase_order_id INTEGER,
     dispatch_guide_id INTEGER,
     FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
