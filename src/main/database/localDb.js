@@ -54,7 +54,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     invoice_number TEXT NOT NULL UNIQUE,
     date TEXT NOT NULL,
-    end_date TEXT NOT NULL,
+    end_date TEXT,
     company_name TEXT NOT NULL,
     net_amount REAL NOT NULL,
     tax_iva REAL NOT NULL,

@@ -32,6 +32,7 @@ const PurchaseOrder = () => {
   const [invoiceFormData, setInvoiceFormData] = useState({
     invoiceNumber: '',
     date: '',
+    endDate: new Date().toISOString().split('T')[0], // Fecha de término por defecto hoy
     companyName: '',
     netAmount: '',
     taxIva: '',
@@ -62,6 +63,7 @@ const PurchaseOrder = () => {
         setInvoiceFormData({
           invoiceNumber: '',
           date: new Date().toISOString().split('T')[0],
+          endDate: new Date().toISOString().split('T')[0], // Fecha de término por defecto hoy
           companyName: newOrder?.company_name || '',
           netAmount: newOrder?.order_amount || '',
           taxIva: '19',
@@ -140,6 +142,7 @@ const PurchaseOrder = () => {
     const payload = {
       invoice_number: invoiceFormData.invoiceNumber,
       date: invoiceFormData.date,
+      end_date: invoiceFormData.endDate,
       company_name: invoiceFormData.companyName,
       net_amount: invoiceFormData.netAmount,
       tax_iva: invoiceFormData.taxIva,

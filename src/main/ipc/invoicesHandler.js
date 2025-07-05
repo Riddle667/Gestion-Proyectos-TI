@@ -36,7 +36,7 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
   const {
     invoice_number,
     date,
-    end_date = null,
+    end_date,
     company_name = null,
     net_amount = null,
     tax_iva = null,
