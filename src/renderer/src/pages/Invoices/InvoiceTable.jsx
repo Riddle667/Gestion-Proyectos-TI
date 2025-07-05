@@ -12,7 +12,8 @@ const formatCurrency = (value) => {
 }
 
 // 👉 Obtener color del semáforo como emoji
-const getDangerCircle = (endDate) => {
+const getDangerCircle = (endDate, isPaid) => {
+  if (isPaid) return '🟢'
   if (!endDate) return '⚪'
 
   const today = new Date()
@@ -27,7 +28,8 @@ const getDangerCircle = (endDate) => {
 }
 
 // 👉 Obtener texto de días restantes
-const getRemainingDays = (endDate) => {
+const getRemainingDays = (endDate, isPaid) => {
+  if (isPaid) return 'Pagada'
   if (!endDate) return '-'
 
   const today = new Date()
@@ -37,7 +39,7 @@ const getRemainingDays = (endDate) => {
   return diffDays < 0 ? `Vencida (hace ${Math.abs(diffDays)} días)` : `${diffDays} días`
 }
 
-const InvoiceTable = ({ invoices, onEdit, onDelete }) => {
+const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid }) => {
   if (invoices.length === 0) {
     return <p className="no-invoices">No hay facturas registradas.</p>
   }
@@ -56,6 +58,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete }) => {
             <th>IVA</th>
             <th>Orden Compra</th>
             <th>Guía Despacho</th>
+            <th>Pagar</th>
             <th>Peligrosidad</th>
             <th>Días Restantes</th>
             <th>Acciones</th>
@@ -73,8 +76,18 @@ const InvoiceTable = ({ invoices, onEdit, onDelete }) => {
               <td>{inv.tax_iva}%</td>
               <td>{inv.purchase_order_number || '-'}</td>
               <td>{inv.dispatch_guide_number || '-'}</td>
-              <td style={{ textAlign: 'center' }}>{getDangerCircle(inv.end_date)}</td>
-              <td>{getRemainingDays(inv.end_date)}</td>
+              <td style={{ textAlign: 'center' }}>
+                <label className="switch-toggle">
+                  <input
+                    type="checkbox"
+                    checked={!!inv.paid}
+                    onChange={() => onTogglePaid(inv)}
+                  />
+                  <span className="slider-round"></span>
+                </label>
+              </td>
+              <td style={{ textAlign: 'center' }}>{getDangerCircle(inv.end_date, !!inv.paid)}</td>
+              <td>{getRemainingDays(inv.end_date, !!inv.paid)}</td>
               <td>
                 <div className="icon-group">
                   <button title="Editar" className="icon-btn edit" onClick={() => onEdit(inv)}>
@@ -108,11 +121,13 @@ InvoiceTable.propTypes = {
       net_amount: PropTypes.number,
       tax_iva: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       purchase_order_number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      dispatch_guide_number: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      dispatch_guide_number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      paid: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
     })
   ).isRequired,
   onEdit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
+  onTogglePaid: PropTypes.func.isRequired
 }
 
 export default InvoiceTable

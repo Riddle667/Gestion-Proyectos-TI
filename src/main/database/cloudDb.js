@@ -62,10 +62,11 @@ export async function initCloudDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
         date DATE NOT NULL,
-        end_date DATE NOT NULL,
+        end_date DATE,
         company_name VARCHAR(255) NOT NULL,
         net_amount DECIMAL(12,2) NOT NULL,
         tax_iva DECIMAL(12,2) NOT NULL,
+        paid BOOLEAN NOT NULL DEFAULT 0,
         purchase_order_id INT NULL,
         dispatch_guide_id INT NULL,
         FOREIGN KEY (purchase_order_id) REFERENCES PurchaseOrder(id)
@@ -74,6 +75,7 @@ export async function initCloudDatabase() {
           ON DELETE SET NULL ON UPDATE CASCADE
       ) ENGINE=InnoDB
     `)
+
 
     await cloudConnection.execute(`SET foreign_key_checks = 1`)
     console.log('✅ Tablas con claves foráneas creadas/verificadas')
