@@ -6,8 +6,6 @@ const db = getDatabase()
 // Obtener todas las facturas
 ipcMain.handle('get-invoices', () => {
   try {
-    console.log('🔄 Consultando facturas...')
-
     const rows = db
       .prepare(
         `
@@ -23,7 +21,6 @@ ipcMain.handle('get-invoices', () => {
       )
       .all()
 
-    console.log(`✅ Obtenidas ${rows.length} facturas con datos relacionados`)
     return rows
   } catch (err) {
     console.error('❌ Error al consultar Invoice con joins:', err)
@@ -40,6 +37,7 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
     company_name = null,
     net_amount = null,
     tax_iva = null,
+    paid = false,
     purchase_order_id = null,
     dispatch_guide_id = null
   } = invoiceData
@@ -51,8 +49,8 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
   try {
     const stmt = db.prepare(`
       INSERT INTO Invoice
-      (invoice_number, date, end_date, company_name, net_amount, tax_iva, purchase_order_id, dispatch_guide_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (invoice_number, date, end_date, company_name, net_amount, tax_iva, paid, purchase_order_id, dispatch_guide_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const result = stmt.run(
@@ -62,11 +60,10 @@ ipcMain.handle('add-invoice', (event, invoiceData) => {
       company_name,
       net_amount,
       tax_iva,
+      paid ? 1 : 0,
       purchase_order_id,
       dispatch_guide_id
     )
-
-    console.log(`✅ Factura agregada con ID: ${result.lastInsertRowid}`)
 
     return { id: result.lastInsertRowid, ...invoiceData }
   } catch (err) {
@@ -83,6 +80,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
     company_name = null,
     net_amount = null,
     tax_iva = null,
+    paid = false,
     purchase_order_id = null,
     dispatch_guide_id = null
   } = invoiceData
@@ -100,6 +98,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
           company_name = ?,
           net_amount = ?,
           tax_iva = ?,
+          paid = ?,
           purchase_order_id = ?,
           dispatch_guide_id = ?
       WHERE id = ?
@@ -112,6 +111,7 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
       company_name,
       net_amount,
       tax_iva,
+      paid ? 1 : 0,
       purchase_order_id,
       dispatch_guide_id,
       id
@@ -121,7 +121,6 @@ ipcMain.handle('update-invoice', (event, id, invoiceData) => {
       throw new Error('No se encontró la factura a actualizar')
     }
 
-    console.log(`✅ Factura actualizada con ID: ${id}`)
     return { id, ...invoiceData }
   } catch (err) {
     console.error('❌ Error al actualizar factura:', err)
@@ -138,7 +137,6 @@ ipcMain.handle('delete-invoice', (event, id) => {
       throw new Error('No se encontró la factura a eliminar')
     }
 
-    console.log(`🗑 Factura eliminada con ID: ${id}`)
     return { id, deleted: true }
   } catch (err) {
     console.error('❌ Error al eliminar factura:', err)

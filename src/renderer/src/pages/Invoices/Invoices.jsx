@@ -20,7 +20,8 @@ const Invoices = () => {
     netAmount: '',
     taxIva: '',
     purchaseOrderId: '',
-    dispatchGuideId: ''
+    dispatchGuideId: '',
+    paid: false
   })
 
   const {
@@ -63,7 +64,8 @@ const Invoices = () => {
       netAmount: invoice.net_amount,
       taxIva: invoice.tax_iva,
       purchaseOrderId: invoice.purchase_order_id || '',
-      dispatchGuideId: invoice.dispatch_guide_id || ''
+      dispatchGuideId: invoice.dispatch_guide_id || '',
+      paid: !!invoice.paid
     })
     setEditingId(invoice.id)
     setIsEditing(true)
@@ -87,7 +89,8 @@ const Invoices = () => {
       net_amount: formData.netAmount,
       tax_iva: formData.taxIva,
       purchase_order_id: formData.purchaseOrderId || null,
-      dispatch_guide_id: formData.dispatchGuideId || null
+      dispatch_guide_id: formData.dispatchGuideId || null,
+      paid: formData.paid ? 1 : 0
     }
 
     if (isEditing) {
@@ -107,6 +110,12 @@ const Invoices = () => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const handleTogglePaid = async (invoice) => {
+    const updatedInvoice = { ...invoice, paid: invoice.paid ? 0 : 1 }
+    await window.electronAPI.updateInvoice(invoice.id, updatedInvoice)
+    fetchInvoices()
+  }
+
   return (
     <div className="invoice-container">
       <div className="card">
@@ -121,11 +130,13 @@ const Invoices = () => {
                 setFormData({
                   invoiceNumber: '',
                   date: '',
+                  endDate: '',
                   companyName: '',
                   netAmount: '',
                   taxIva: '',
                   purchaseOrderId: '',
-                  dispatchGuideId: ''
+                  dispatchGuideId: '',
+                  paid: false
                 })
               }}
             >
@@ -134,7 +145,13 @@ const Invoices = () => {
           )}
         </div>
 
-        <InvoiceTable invoices={invoices} onEdit={handleEdit} onDelete={handleDelete} />
+        <InvoiceTable
+          invoices={invoices}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onTogglePaid={handleTogglePaid}
+          user={user}
+        />
       </div>
 
       <InvoiceFormModal

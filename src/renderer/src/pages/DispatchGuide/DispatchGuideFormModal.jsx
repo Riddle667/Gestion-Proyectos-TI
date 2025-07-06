@@ -124,11 +124,10 @@ const DispatchGuideFormModal = ({
               !formData.rut ||
               !formData.address ||
               !formData.city ||
-              !formData.purchaseOrderId ||
               !formData.transportType
             }
           >
-            {isEditing ? 'Actualizar' : 'Crear Factura'}
+            {isEditing ? 'Actualizar' : 'Crear Guía'}
           </button>
         </div>
       </div>
@@ -145,7 +144,7 @@ DispatchGuideFormModal.propTypes = {
     purchase_order_number: PropTypes.string
   }),
   purchaseOrders: PropTypes.array.isRequired,
-  dispatchGuides: PropTypes.array.isRequired,
+  //dispatchGuides: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired
