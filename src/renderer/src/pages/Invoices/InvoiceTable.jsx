@@ -39,7 +39,7 @@ const getRemainingDays = (endDate, isPaid) => {
   return diffDays < 0 ? `Vencida (hace ${Math.abs(diffDays)} días)` : `${diffDays} días`
 }
 
-const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid }) => {
+const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid, user }) => {
   if (invoices.length === 0) {
     return <p className="no-invoices">No hay facturas registradas.</p>
   }
@@ -61,7 +61,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid }) => {
             <th>Pagar</th>
             <th>Peligrosidad</th>
             <th>Días Restantes</th>
-            <th>Acciones</th>
+            {user?.role === 'admin' && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -82,6 +82,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid }) => {
                     type="checkbox"
                     checked={!!inv.paid}
                     onChange={() => onTogglePaid(inv)}
+                    disabled={user?.role !== 'admin'}
                   />
                   <span className="slider-round"></span>
                 </label>
@@ -90,16 +91,16 @@ const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid }) => {
               <td>{getRemainingDays(inv.end_date, !!inv.paid)}</td>
               <td>
                 <div className="icon-group">
-                  <button title="Editar" className="icon-btn edit" onClick={() => onEdit(inv)}>
-                    <EditIcon fontSize="small" />
-                  </button>
-                  <button
-                    title="Eliminar"
-                    className="icon-btn delete"
-                    onClick={() => onDelete(inv.id)}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </button>
+                  {user?.role === 'admin' && (
+                    <>
+                      <button title="Editar" className="icon-btn edit" onClick={() => onEdit(inv)}>
+                        <EditIcon fontSize="small" />
+                      </button>
+                      <button title="Eliminar" className="icon-btn delete" onClick={() => onDelete(inv.id)}>
+                        <DeleteIcon fontSize="small" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </td>
             </tr>
@@ -127,7 +128,11 @@ InvoiceTable.propTypes = {
   ).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
-  onTogglePaid: PropTypes.func.isRequired
+  onTogglePaid: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    role: PropTypes.string
+  }).isRequired
 }
+
 
 export default InvoiceTable

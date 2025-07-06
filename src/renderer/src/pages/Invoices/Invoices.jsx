@@ -150,6 +150,7 @@ const Invoices = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onTogglePaid={handleTogglePaid}
+          user={user}
         />
       </div>
 
