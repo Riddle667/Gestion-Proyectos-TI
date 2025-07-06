@@ -146,7 +146,7 @@ const DispatchGuide = () => {
           )}
         </div>
 
-        <DispatchGuideTable guides={guides} onEdit={handleEdit} onDelete={handleDelete} />
+        <DispatchGuideTable guides={guides} onEdit={handleEdit} onDelete={handleDelete} user={user} />
       </div>
 
       <DispatchGuideFormModal
