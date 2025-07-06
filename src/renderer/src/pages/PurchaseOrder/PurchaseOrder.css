@@ -312,3 +312,27 @@
     align-items: stretch;
   }
 }
+
+.icon-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+
+.icon-btn.edit {
+  color: #1976d2;
+}
+
+.icon-btn.delete {
+  color: #d32f2f;
+}
+
+.icon-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+

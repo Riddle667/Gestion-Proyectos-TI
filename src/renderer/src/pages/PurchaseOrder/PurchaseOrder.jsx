@@ -3,6 +3,9 @@ import './PurchaseOrder.css'
 import InvoiceFormModal from '../Invoices/InvoiceFormModal'
 import DispatchGuideFormModal from '../DispatchGuide/DispatchGuideFormModal'
 import useModalAndFeedback from '../../components/useModalAndFeedback'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+
 
 const PurchaseOrder = () => {
   const [orders, setOrders] = useState([])
@@ -233,6 +236,65 @@ const PurchaseOrder = () => {
     }
   }
 
+  const handleEditOrder = (order) => {
+  setFormData({
+    purchaseOrderNumber: order.purchase_order_number,
+    companyName: order.company_name,
+    companyRepresentative: order.company_representative,
+    date: order.date,
+    orderAmount: order.order_amount
+  })
+  setNewOrder(order) // Guarda el orden en edición
+  setIsModalOpen(true)
+  }
+
+  const handleDeleteOrder = (id) => {
+    openModal('¿Estás seguro de eliminar esta orden de compra?', async () => {
+      try {
+        await window.electronAPI.deletePurchaseOrder(id)
+        showFeedback('✅ Orden eliminada correctamente.', 'success')
+        fetchOrders()
+      } catch (error) {
+        showFeedback('❌ Error al eliminar orden.', 'error')
+        console.error(error)
+      }
+    })
+  }
+
+  const handleSaveOrder = async () => {
+  try {
+    if (newOrder?.id) {
+      // Actualizar
+      await window.electronAPI.updatePurchaseOrder(newOrder.id, {
+        purchase_order_number: formData.purchaseOrderNumber,
+        company_name: formData.companyName,
+        company_representative: formData.companyRepresentative,
+        date: formData.date,
+        order_amount: formData.orderAmount
+      })
+      showFeedback('✅ Orden actualizada correctamente.', 'success')
+    } else {
+      // Crear nueva
+      await handleAddOrder()
+      return
+    }
+
+    setIsModalOpen(false)
+    setFormData({
+      purchaseOrderNumber: '',
+      companyName: '',
+      companyRepresentative: '',
+      date: '',
+      orderAmount: ''
+    })
+    setNewOrder(null)
+    fetchOrders()
+  } catch (error) {
+    showFeedback('❌ Error al guardar orden.', 'error')
+  }
+}
+
+
   const formatDate = (dateString) => {
     if (!dateString) return '-'
     const date = new Date(dateString)
@@ -273,6 +335,7 @@ const PurchaseOrder = () => {
                   <th>Representante</th>
                   <th>Fecha</th>
                   <th>Monto</th>
+                  {user?.role === 'admin' && <th>Acciones</th>}
                 </tr>
               </thead>
               <tbody>
@@ -284,6 +347,28 @@ const PurchaseOrder = () => {
                     <td>{order.company_representative || '-'}</td>
                     <td>{formatDate(order.date)}</td>
                     <td className="amount">{formatAmount(order.order_amount)}</td>
+                    {user?.role === 'admin' && (
+                      <td>
+                        <div className="icon-group">
+                          <>
+                            <button
+                              title="Editar"
+                              className="icon-btn edit"
+                              onClick={() => handleEditOrder(order)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </button>
+                            <button
+                              title="Eliminar"
+                              className="icon-btn delete"
+                              onClick={() => handleDeleteOrder(order.id)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </button>
+                          </>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -370,10 +455,10 @@ const PurchaseOrder = () => {
               </button>
               <button
                 className="btn-primary"
-                onClick={handleAddOrder}
+                onClick={handleSaveOrder}
                 disabled={!formData.purchaseOrderNumber.trim()}
               >
-                Crear Orden
+                {newOrder ? 'Actualizar Orden' : 'Crear Orden'}
               </button>
             </div>
           </div>
