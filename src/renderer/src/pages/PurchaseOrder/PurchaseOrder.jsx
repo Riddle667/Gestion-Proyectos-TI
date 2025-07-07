@@ -6,7 +6,6 @@ import useModalAndFeedback from '../../components/useModalAndFeedback'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-
 const PurchaseOrder = () => {
   const [orders, setOrders] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -15,6 +14,7 @@ const PurchaseOrder = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
   const [newOrder, setNewOrder] = useState(null)
   const [newGuide, setNewGuide] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
     purchaseOrderNumber: '',
     companyName: '',
@@ -227,7 +227,8 @@ const PurchaseOrder = () => {
       date: '',
       orderAmount: ''
     })
-    setNewOrder(null)   
+    setIsEditing(false)
+    setNewOrder(null)
     setIsModalOpen(false)
   }
 
@@ -238,15 +239,16 @@ const PurchaseOrder = () => {
   }
 
   const handleEditOrder = (order) => {
-  setFormData({
-    purchaseOrderNumber: order.purchase_order_number,
-    companyName: order.company_name,
-    companyRepresentative: order.company_representative,
-    date: order.date,
-    orderAmount: order.order_amount
-  })
-  setNewOrder(order) // Guarda el orden en edición
-  setIsModalOpen(true)
+    setFormData({
+      purchaseOrderNumber: order.purchase_order_number,
+      companyName: order.company_name,
+      companyRepresentative: order.company_representative,
+      date: order.date,
+      orderAmount: order.order_amount
+    })
+    setNewOrder(order) // Guarda el orden en edición
+    setIsEditing(true)
+    setIsModalOpen(true)
   }
 
   const handleDeleteOrder = (id) => {
@@ -263,38 +265,38 @@ const PurchaseOrder = () => {
   }
 
   const handleSaveOrder = async () => {
-  try {
-    if (newOrder?.id) {
-      // Actualizar
-      await window.electronAPI.updatePurchaseOrder(newOrder.id, {
-        purchase_order_number: formData.purchaseOrderNumber,
-        company_name: formData.companyName,
-        company_representative: formData.companyRepresentative,
-        date: formData.date,
-        order_amount: formData.orderAmount
+    try {
+      if (newOrder?.id) {
+        // Actualizar
+        await window.electronAPI.updatePurchaseOrder(newOrder.id, {
+          purchase_order_number: formData.purchaseOrderNumber,
+          company_name: formData.companyName,
+          company_representative: formData.companyRepresentative,
+          date: formData.date,
+          order_amount: formData.orderAmount
+        })
+        showFeedback('✅ Orden actualizada correctamente.', 'success')
+      } else {
+        // Crear nueva
+        await handleAddOrder()
+        return
+      }
+
+      setIsModalOpen(false)
+      setFormData({
+        purchaseOrderNumber: '',
+        companyName: '',
+        companyRepresentative: '',
+        date: '',
+        orderAmount: ''
       })
-      showFeedback('✅ Orden actualizada correctamente.', 'success')
-    } else {
-      // Crear nueva
-      await handleAddOrder()
-      return
+      setIsEditing(false)
+      setNewOrder(null)
+      fetchOrders()
+    } catch (error) {
+      showFeedback('❌ Error al guardar orden.', error)
     }
-
-    setIsModalOpen(false)
-    setFormData({
-      purchaseOrderNumber: '',
-      companyName: '',
-      companyRepresentative: '',
-      date: '',
-      orderAmount: ''
-    })
-    setNewOrder(null)
-    fetchOrders()
-  } catch (error) {
-    showFeedback('❌ Error al guardar orden.', 'error')
   }
-}
-
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'
@@ -383,7 +385,7 @@ const PurchaseOrder = () => {
         <div className="modal-overlay" onClick={handleModalBackdropClick}>
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Nueva Orden de Compra</h3>
+              <h3>{isEditing === true ? 'Editar Orden de Compra' : 'Nueva Orden de Compra'}</h3>
               <button className="btn-close" onClick={handleCancelModal}>
                 ×
               </button>
@@ -459,7 +461,7 @@ const PurchaseOrder = () => {
                 onClick={handleSaveOrder}
                 disabled={!formData.purchaseOrderNumber.trim()}
               >
-                {newOrder ? 'Actualizar Orden' : 'Crear Orden'}
+                {isEditing === true ? 'Actualizar Orden' : 'Crear Orden'}
               </button>
             </div>
           </div>
