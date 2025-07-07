@@ -3,12 +3,10 @@ import { getDatabase } from '../database/localDb.js'
 import { initCloudDatabase, getCloudDatabase } from '../database/cloudDb.js'
 
 const localDb = getDatabase()
-let cloudDb // Será inicializada correctamente más abajo
+let cloudDb
 
-// Tablas a sincronizar
 const tables = ['User', 'PurchaseOrder', 'DispatchGuide', 'Invoice']
 
-// Función para sincronizar desde local hacia nube (SQLite → MySQL)
 async function backupToCloud() {
   try {
     for (const table of tables) {
@@ -24,17 +22,12 @@ async function backupToCloud() {
 
         let values = Object.values(row)
 
-        // Validar claves foráneas solo en la tabla Invoice
         if (table === 'Invoice') {
           const purchaseOrderId = row.purchase_order_id
           const dispatchGuideId = row.dispatch_guide_id
 
-          const [po] = await cloudDb.execute(`SELECT id FROM PurchaseOrder WHERE id = ?`, [
-            purchaseOrderId
-          ])
-          const [dg] = await cloudDb.execute(`SELECT id FROM DispatchGuide WHERE id = ?`, [
-            dispatchGuideId
-          ])
+          const [po] = await cloudDb.execute(`SELECT id FROM PurchaseOrder WHERE id = ?`, [purchaseOrderId])
+          const [dg] = await cloudDb.execute(`SELECT id FROM DispatchGuide WHERE id = ?`, [dispatchGuideId])
 
           const validPO = po.length > 0
           const validDG = dg.length > 0
@@ -57,7 +50,6 @@ async function backupToCloud() {
   }
 }
 
-// Función para sincronizar desde nube hacia local (MySQL → SQLite)
 async function restoreFromCloud() {
   try {
     for (const table of tables) {
@@ -74,20 +66,20 @@ async function restoreFromCloud() {
 
       const insertMany = localDb.transaction((rows) => {
         for (const row of rows) {
-          // Convierte valores a formatos válidos para SQLite
           const values = Object.values(row).map((val, idx) => {
             const colName = columns[idx]
 
-            if ((table === 'Invoice' || table === 'PurchaseOrder') && colName === 'date') {
-              if (val instanceof Date) {
-                return val.toISOString().split('T')[0]
-              }
-              if (typeof val === 'string') {
-                return val.split('T')[0]
-              }
-              if (val == null) {
+            // Normalización de fechas para Invoice y PurchaseOrder
+            if (
+              (table === 'Invoice' && (colName === 'date' || colName === 'end_date')) ||
+              (table === 'PurchaseOrder' && colName === 'date')
+            ) {
+              if (val instanceof Date) return val.toISOString().split('T')[0]
+              if (typeof val === 'string') return val.split('T')[0]
+              if (val == null && colName === 'date') {
                 throw new Error(`Campo 'date' en ${table} no puede ser nulo`)
               }
+              return null
             }
 
             if (
@@ -112,6 +104,7 @@ async function restoreFromCloud() {
 
       insertMany(rows)
     }
+
     return '✅ Restauración completa desde nube hacia local.'
   } catch (err) {
     console.error('❌ Error durante restauración:', err)
@@ -119,7 +112,6 @@ async function restoreFromCloud() {
   }
 }
 
-// Inicializa cloudDb y luego registra handlers
 export async function setupSyncHandlers() {
   await initCloudDatabase()
   cloudDb = getCloudDatabase()

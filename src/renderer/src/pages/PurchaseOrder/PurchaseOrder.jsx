@@ -227,6 +227,7 @@ const PurchaseOrder = () => {
       date: '',
       orderAmount: ''
     })
+    setNewOrder(null)   
     setIsModalOpen(false)
   }
 
