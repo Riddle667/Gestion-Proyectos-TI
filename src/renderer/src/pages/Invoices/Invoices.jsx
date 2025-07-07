@@ -81,29 +81,77 @@ const Invoices = () => {
   }
 
   const handleSave = async () => {
+    // ✅ Validaciones
+
+      const isDuplicate = invoices.some(
+    (inv) =>
+      inv.invoice_number === formData.invoiceNumber &&
+      inv.id !== editingId // evita el error al editar la misma factura
+  )
+
+  if (isDuplicate) {
+    showFeedback('❌ Ya existe una factura con ese número.', 'error')
+    return
+  }
+
+    if (!formData.invoiceNumber.trim()) {
+      showFeedback('⚠️ El número de factura es obligatorio.', 'error')
+      return
+    }
+
+    if (!formData.date.trim()) {
+      showFeedback('⚠️ La fecha es obligatoria.', 'error')
+      return
+    }
+
+    if (!formData.endDate.trim()) {
+      showFeedback('⚠️ La fecha de término es obligatoria.', 'error')
+      return
+    }
+
+    if (!formData.companyName.trim()) {
+      showFeedback('⚠️ El nombre de la empresa es obligatorio.', 'error')
+      return
+    }
+
+    if (!formData.netAmount || isNaN(formData.netAmount) || parseFloat(formData.netAmount) <= 0) {
+      showFeedback('⚠️ El monto neto debe ser un número mayor a 0.', 'error')
+      return
+    }
+
+    if (formData.taxIva === '' || isNaN(formData.taxIva)) {
+      showFeedback('⚠️ El IVA debe ser un número válido.', 'error')
+      return
+    }
+
     const payload = {
       invoice_number: formData.invoiceNumber,
       date: formData.date,
       end_date: formData.endDate,
       company_name: formData.companyName,
-      net_amount: formData.netAmount,
-      tax_iva: formData.taxIva,
+      net_amount: parseFloat(formData.netAmount),
+      tax_iva: parseFloat(formData.taxIva),
       purchase_order_id: formData.purchaseOrderId || null,
       dispatch_guide_id: formData.dispatchGuideId || null,
       paid: formData.paid ? 1 : 0
     }
 
-    if (isEditing) {
-      await window.electronAPI.updateInvoice(editingId, payload)
-    } else {
-      await window.electronAPI.addInvoice(payload)
-    }
+    try {
+      if (isEditing) {
+        await window.electronAPI.updateInvoice(editingId, payload)
+      } else {
+        await window.electronAPI.addInvoice(payload)
+      }
 
-    setIsModalOpen(false)
-    setEditingId(null)
-    setIsEditing(false)
-    showFeedback('✅ Factura guardada correctamente.', 'success')
-    fetchInvoices()
+      setIsModalOpen(false)
+      setEditingId(null)
+      setIsEditing(false)
+      showFeedback('✅ Factura guardada correctamente.', 'success')
+      fetchInvoices()
+    } catch (error) {
+      console.error('Error al guardar factura:', error)
+      showFeedback('❌ Ocurrió un error al guardar la factura.', 'error')
+    }
   }
 
   const handleInputChange = (field, value) => {

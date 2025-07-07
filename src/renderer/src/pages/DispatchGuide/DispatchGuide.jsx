@@ -57,7 +57,47 @@ const DispatchGuide = () => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const validateForm = () => {
+    if (!formData.dispatchGuideNumber.trim()) {
+      showFeedback('❌ El número de guía de despacho es obligatorio.', 'error')
+      return false
+    }
+    if (!formData.recipientName.trim()) {
+      showFeedback('❌ El nombre del destinatario es obligatorio.', 'error')
+      return false
+    }
+    if (!formData.address.trim()) {
+      showFeedback('❌ La dirección es obligatoria.', 'error')
+      return false
+    }
+    if (!formData.district.trim()) {
+      showFeedback('❌ La comuna es obligatoria.', 'error')
+      return false
+    }
+    if (!formData.city.trim()) {
+      showFeedback('❌ La ciudad es obligatoria.', 'error')
+      return false
+    }
+    if (!formData.transportType.trim()) {
+      showFeedback('❌ El tipo de transporte es obligatorio.', 'error')
+      return false
+    }
+    // Validación para número duplicado:
+    const duplicate = guides.some(
+      (g) =>
+        g.dispatch_guide_number === formData.dispatchGuideNumber &&
+        g.id !== editingId
+    )
+    if (duplicate) {
+      showFeedback('❌ Ya existe una guía con ese número.', 'error')
+      return false
+    }
+    return true
+  }
+
   const handleSave = async () => {
+    if (!validateForm()) return
+
     const payload = {
       dispatch_guide_number: formData.dispatchGuideNumber,
       recipient_name: formData.recipientName,
