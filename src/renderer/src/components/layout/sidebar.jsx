@@ -11,6 +11,7 @@ export default function Layout() {
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackType, setFeedbackType] = useState('') // 'success' | 'error'
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     window.api.getCurrentUser().then((u) => {
@@ -42,6 +43,7 @@ export default function Layout() {
   }
 
   const confirmAction = async () => {
+    setLoading(true) // ⬅️ Mostrar spinner
     try {
       switch (modalAction) {
         case 'backup':
@@ -66,6 +68,7 @@ export default function Layout() {
       console.error('❌ Error durante la acción:', error)
       showFeedback('❌ Ocurrió un error durante la operación.', 'error')
     } finally {
+      setLoading(false) // ⬅️ Ocultar spinner
       closeModal()
     }
   }
@@ -126,6 +129,12 @@ export default function Layout() {
       )}
 
       {feedbackMessage && <div className={`feedback-toast ${feedbackType}`}>{feedbackMessage}</div>}
+
+      {loading && (
+        <div className="global-loading-overlay">
+          <div className="spinner" />
+        </div>
+      )}
     </div>
   )
 }

@@ -58,7 +58,7 @@ const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid, user }) => {
             <th>IVA</th>
             <th>Orden Compra</th>
             <th>Guía Despacho</th>
-            <th>Pagar</th>
+            {user?.role === 'admin' && <th>Pagar</th>}
             <th>Peligrosidad</th>
             <th>Días Restantes</th>
             {user?.role === 'admin' && <th>Acciones</th>}
@@ -76,33 +76,32 @@ const InvoiceTable = ({ invoices, onEdit, onDelete, onTogglePaid, user }) => {
               <td>{inv.tax_iva}%</td>
               <td>{inv.purchase_order_number || '-'}</td>
               <td>{inv.dispatch_guide_number || '-'}</td>
-              <td style={{ textAlign: 'center' }}>
-                <label className="switch-toggle">
-                  <input
-                    type="checkbox"
-                    checked={!!inv.paid}
-                    onChange={() => onTogglePaid(inv)}
-                    disabled={user?.role !== 'admin'}
-                  />
-                  <span className="slider-round"></span>
-                </label>
-              </td>
+              {user?.role === 'admin' && (
+                <td style={{ textAlign: 'center' }}>
+                  <label className="switch-toggle">
+                    <input
+                      type="checkbox"
+                      checked={!!inv.paid}
+                      onChange={() => onTogglePaid(inv)}
+                    />
+                    <span className="slider-round"></span>
+                  </label>
+                </td>
+              )}
               <td style={{ textAlign: 'center' }}>{getDangerCircle(inv.end_date, !!inv.paid)}</td>
               <td>{getRemainingDays(inv.end_date, !!inv.paid)}</td>
-              <td>
-                <div className="icon-group">
-                  {user?.role === 'admin' && (
-                    <>
-                      <button title="Editar" className="icon-btn edit" onClick={() => onEdit(inv)}>
-                        <EditIcon fontSize="small" />
-                      </button>
-                      <button title="Eliminar" className="icon-btn delete" onClick={() => onDelete(inv.id)}>
-                        <DeleteIcon fontSize="small" />
-                      </button>
-                    </>
-                  )}
-                </div>
-              </td>
+              {user?.role === 'admin' && (
+                <td>
+                  <div className="icon-group">
+                    <button title="Editar" className="icon-btn edit" onClick={() => onEdit(inv)}>
+                      <EditIcon fontSize="small" />
+                    </button>
+                    <button title="Eliminar" className="icon-btn delete" onClick={() => onDelete(inv.id)}>
+                      <DeleteIcon fontSize="small" />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -133,6 +132,5 @@ InvoiceTable.propTypes = {
     role: PropTypes.string
   }).isRequired
 }
-
 
 export default InvoiceTable
