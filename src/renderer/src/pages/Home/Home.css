@@ -503,4 +503,9 @@
   .table-section h3 {
     font-size: 1.2rem;
   }
+
+  .table-container table.highlight-red {
+  background-color: #ffe6e6;
+}
+
 }

@@ -64,6 +64,16 @@ export const InvoiceViewModal = ({
                   <label>Empresa:</label>
                   <span className="detail-value">{invoice.company_name || '-'}</span>
                 </div>
+                <div className="detail-item">
+                  <label>Pagado:</label>
+                  <span 
+                    className="detail-value" 
+                    style={{ color: invoice.paid ? 'green' : 'red' }}
+                  >
+                    {invoice.paid ? 'SÍ' : 'NO'}
+                  </span>
+                </div>
+
               </div>
             </div>
 

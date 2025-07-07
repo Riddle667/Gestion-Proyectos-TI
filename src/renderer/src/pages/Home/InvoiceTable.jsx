@@ -1,7 +1,6 @@
 import EditIcon from '@mui/icons-material/Search'
 import PropTypes from 'prop-types'
 
-// 👉 Aquí defines directamente la función
 const formatCurrency = (value) => {
   if (!value) return '-'
   return new Intl.NumberFormat('es-CL', {
@@ -10,14 +9,18 @@ const formatCurrency = (value) => {
   }).format(parseFloat(value))
 }
 
-const InvoiceTable = ({ invoices, onDetails }) => {
+const InvoiceTable = ({ invoices, onDetails, highlight  }) => {
   if (invoices.length === 0) {
     return <p className="no-invoices">No hay facturas registradas.</p>
   }
 
+  const lastFiveInvoices = [...invoices]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5)
+
   return (
     <div className="table-container">
-      <table>
+      <table className={highlight ? 'highlight-red' : ''}>
         <thead>
           <tr>
             <th>ID</th>
@@ -26,11 +29,12 @@ const InvoiceTable = ({ invoices, onDetails }) => {
             <th>Fecha Término</th>
             <th>Empresa</th>
             <th>Monto</th>
+            <th>Pagada</th>
             <th>Ver detalles</th>
           </tr>
         </thead>
         <tbody>
-          {invoices.map((inv) => (
+          {lastFiveInvoices.map((inv) => (
             <tr key={inv.id}>
               <td>{inv.id}</td>
               <td>{inv.invoice_number}</td>
@@ -39,10 +43,17 @@ const InvoiceTable = ({ invoices, onDetails }) => {
               <td>{inv.company_name}</td>
               <td>{formatCurrency(inv.net_amount)}</td>
               <td>
+                <span style={{ color: inv.paid === 1 ? 'green' : 'red', fontWeight: 'bold' }}>
+                  {inv.paid === 1 ? 'SI' : 'NO'}
+                </span>
+              </td>
+              <td>
                 <div className="icon-group">
-                  <button title="Detalle" 
-                  className="icon-btn details" 
-                  onClick={() => onDetails(inv)}>
+                  <button
+                    title="Detalle"
+                    className="icon-btn details"
+                    onClick={() => onDetails(inv)}
+                  >
                     <EditIcon fontSize="small" />
                   </button>
                 </div>
@@ -54,17 +65,21 @@ const InvoiceTable = ({ invoices, onDetails }) => {
     </div>
   )
 }
+
 InvoiceTable.propTypes = {
   invoices: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       invoice_number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       date: PropTypes.string,
+      end_date: PropTypes.string,
       company_name: PropTypes.string,
       net_amount: PropTypes.number,
+      paid: PropTypes.number
     })
   ).isRequired,
   onDetails: PropTypes.func.isRequired,
+  highlight: PropTypes.bool
 }
 
 export default InvoiceTable

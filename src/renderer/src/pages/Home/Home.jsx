@@ -88,7 +88,7 @@ export default function Home() {
   return (
     <div className="main-content">
       <div className="welcome-box">
-        <h2>Bienvenido al Gestor Montecristo</h2>
+        <h2>Bienvenido al Gestor de pagos Montecristo</h2>
         <p>Selecciona una opción en el menú lateral para comenzar.</p>
       </div>
 
@@ -99,6 +99,16 @@ export default function Home() {
           onDetails={handleDetails}
         />
       </div>
+
+      <div className="table-section">
+        <h3>Facturas Pendientes de Pago</h3>
+        <InvoiceTable 
+          invoices={invoices.filter(inv => inv.paid === 0)}
+          onDetails={handleDetails}
+          highlight={true}
+        />
+      </div>
+
 
       <InvoiceViewModal
         isOpen={isModalOpen}
